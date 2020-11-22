@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="name">
+        <item name="android:textSize"> 40sp  </item>
+
+        <item name="android:letterSpacing"> -0.01</item>
+
+        <item name="android:textColor">#ECECEC</item>
+
+        <item name="android:shadowColor">#80000000</item>
+
+        <item name="android:shadowDx">0</item>
+
+        <item name="android:shadowDy">6</item>
+
+        <item name="android:shadowRadius">12</item>
+    </style>
+
+    <style name="movieGenre">
+        <item name="android:textSize">14sp</item>
+
+        <item name="android:textColor">#FF3466</item>
+    </style>
+
+    <style name="description">
+        <item name="android:textSize">14sp</item>
+
+        <item name="android:textColor">#FFFFFF</item>
+    </style>
+
+    <style name="storyline">
+        <item name="android:textSize">14sp</item>
+
+        <item name="android:textColor">#ECECEC</item>
+
+        <item name="android:shadowColor">#80000000</item>
+
+        <item name="android:shadowDx">0</item>
+
+        <item name="android:shadowDy">6</item>
+
+        <item name="android:shadowRadius">12</item>
+    </style>
+
+    <style name="review">
+        <item name="android:textSize">14sp</item>
+
+        <item name="android:textColor">#6D6D80</item>
+    </style>
+
+    <style name="cast">
+        <item name="android:textSize">14sp</item>
+
+        <item name="android:letterSpacing">-0.01</item>
+
+        <item name="android:textColor">#ECECEC</item>
+
+        <item name="android:shadowColor">#80000000</item>
+
+        <item name="android:shadowDx">0</item>
+
+        <item name="android:shadowDy">6</item>
+
+        <item name="android:shadowRadius">12</item>
+    </style>
+
+    <style name="cast_name">
+        <item name="android:textSize">12sp</item>
+
+        <item name="android:textColor">#D8D8D8</item>
+    </style>
+
+    <style name="back">
+        <item name="android:textSize">12sp</item>
+
+        <item name="android:textColor">#6D6D80</item>
+    </style>
+
+    <style name="rectangle_text">
+        <item name="android:textSize">12sp</item>
+
+        <item name="android:textColor">#FFFFFF</item>
+    </style>
+</resources>
