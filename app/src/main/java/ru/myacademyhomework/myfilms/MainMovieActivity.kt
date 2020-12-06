@@ -12,7 +12,7 @@ class MainMovieActivity : AppCompatActivity(), FragmentMoviesList.Companion.List
         setContentView(R.layout.activity_main)
 
         if (savedInstanceState == null){
-            changeFragment(FragmentMoviesList.newInstance("",""))
+            changeFragmentNull(FragmentMoviesList.newInstance("",""))
         }
     }
 
@@ -21,6 +21,11 @@ class MainMovieActivity : AppCompatActivity(), FragmentMoviesList.Companion.List
             .replace(R.id.fragment_container, fragment)
             .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
             .addToBackStack(null)
+            .commit()
+    }
+    fun changeFragmentNull (fragment : Fragment){
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.fragment_container, fragment)
             .commit()
     }
 

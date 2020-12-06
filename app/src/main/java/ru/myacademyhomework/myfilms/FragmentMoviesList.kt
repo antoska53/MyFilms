@@ -8,6 +8,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.fragment.app.FragmentManager
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -41,6 +43,13 @@ class FragmentMoviesList : Fragment() {
     ): View? {
         // Inflate the layout for this fragment
        return inflater.inflate(R.layout.fragment_movies_list, container, false)
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        var recycler: RecyclerView = view.findViewById(R.id.recycler_movie)
+       // recycler.layoutManager = GridLayoutManager(view.context,2)
+        recycler?.adapter = MovieAdapter()
     }
 
     override fun onAttach(context: Context) {
