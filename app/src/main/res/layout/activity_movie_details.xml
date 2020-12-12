@@ -87,7 +87,7 @@
             android:layout_marginEnd="16dp"
             android:gravity="center_vertical"
             android:lineSpacingExtra="0sp"
-            android:text="@string/movieName"
+            android:text="@string/movie_name_avengers"
             android:textAppearance="@style/name"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -188,7 +188,7 @@
             android:layout_marginStart="16dp"
             android:layout_marginTop="4dp"
             android:layout_marginEnd="16dp"
-            android:text="@string/description"
+            android:text="@string/description_avengers"
             android:textAppearance="@style/description"
             app:layout_constraintTop_toBottomOf="@id/storyline" />
 

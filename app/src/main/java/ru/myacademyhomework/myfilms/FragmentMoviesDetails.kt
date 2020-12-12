@@ -5,10 +5,12 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
+import android.widget.TextView
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
+private const val NAME_MOVIE = "nameMovie"
 private const val ARG_PARAM2 = "param2"
 
 /**
@@ -18,13 +20,13 @@ private const val ARG_PARAM2 = "param2"
  */
 class FragmentMoviesDetails : Fragment() {
     // TODO: Rename and change types of parameters
-    private var param1: String? = null
+    private var nameMovie: String? = null
     private var param2: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
+            nameMovie = it.getString(NAME_MOVIE)
             param2 = it.getString(ARG_PARAM2)
         }
 
@@ -36,7 +38,29 @@ class FragmentMoviesDetails : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_movie_details, container, false)
+        var view: View = inflater.inflate(R.layout.fragment_movie_details, container, false)
+        var ivImageMovie: ImageView = view.findViewById(R.id.main_image)
+        var tvMovieDescription: TextView = view.findViewById(R.id.description)
+
+        when (nameMovie) {
+            "avengers" -> {
+                ivImageMovie.setImageResource(R.drawable.avengers)
+                tvMovieDescription.setText(R.string.description_avengers)
+            }
+            "tenet" -> {
+                ivImageMovie.setImageResource(R.drawable.tenet_movie)
+                tvMovieDescription.setText(R.string.description_tenet)
+            }
+            "black widow" -> {
+                ivImageMovie.setImageResource(R.drawable.black_widow_movie)
+                tvMovieDescription.setText(R.string.description_black_widow)
+            }
+            "wonder woman" -> {
+                ivImageMovie.setImageResource(R.drawable.wonder_woman_movie)
+                tvMovieDescription.setText(R.string.description_wonder_woman)
+            }
+        }
+        return view
     }
 
     companion object {
@@ -53,7 +77,7 @@ class FragmentMoviesDetails : Fragment() {
         fun newInstance(param1: String, param2: String) =
             FragmentMoviesDetails().apply {
                 arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
+                    putString(NAME_MOVIE, param1)
                     putString(ARG_PARAM2, param2)
                 }
             }

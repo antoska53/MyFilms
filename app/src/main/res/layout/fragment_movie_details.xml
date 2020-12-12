@@ -22,7 +22,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:scaleType="centerCrop"
-            android:src="@drawable/avengers"
+            tools:src="@drawable/avengers"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -87,7 +87,7 @@
             android:layout_marginEnd="16dp"
             android:gravity="center_vertical"
             android:lineSpacingExtra="0sp"
-            android:text="@string/movieName"
+            tools:text="@string/movie_name_avengers"
             android:textAppearance="@style/name"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -188,7 +188,7 @@
             android:layout_marginStart="16dp"
             android:layout_marginTop="4dp"
             android:layout_marginEnd="16dp"
-            android:text="@string/description"
+            tools:text="@string/description_avengers"
             android:textAppearance="@style/description"
             app:layout_constraintTop_toBottomOf="@id/storyline" />
 

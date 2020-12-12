@@ -48,8 +48,9 @@ class FragmentMoviesList : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         var recycler: RecyclerView = view.findViewById(R.id.recycler_movie)
-       // recycler.layoutManager = GridLayoutManager(view.context,2)
-        recycler?.adapter = MovieAdapter()
+        recycler.layoutManager = GridLayoutManager(view.context,2)
+        recycler?.adapter = MovieAdapter(listener)
+
     }
 
     override fun onAttach(context: Context) {
@@ -59,8 +60,8 @@ class FragmentMoviesList : Fragment() {
 
     override fun onStart() {
         super.onStart()
-        imageView = view?.findViewById(R.id.mask_avengers_movie)
-        imageView?.setOnClickListener(View.OnClickListener { listener?.itemClicked(FragmentMoviesDetails.newInstance("", "")) })
+        //imageView = view?.findViewById(R.id.mask_avengers_movie)
+       //imageView?.setOnClickListener(View.OnClickListener { listener?.itemClicked(FragmentMoviesDetails.newInstance("", "")) })
     }
 
 
