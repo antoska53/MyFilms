@@ -7,6 +7,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -61,6 +64,15 @@ class FragmentMoviesDetails : Fragment() {
             }
         }
         return view
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        var recycler: RecyclerView = view.findViewById(R.id.recycler_actor)
+        recycler.layoutManager = LinearLayoutManager(context, RecyclerView.HORIZONTAL, false)
+        recycler.adapter = ActorAdapter()
+        //recycler.addItemDecoration(MovieItemDecoration(20))
+
     }
 
     companion object {

@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.fragment.app.FragmentManager
+import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 
@@ -25,7 +26,6 @@ class FragmentMoviesList : Fragment() {
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
-    private var imageView: ImageView? = null
     private var listener: Listener? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -50,6 +50,8 @@ class FragmentMoviesList : Fragment() {
         var recycler: RecyclerView = view.findViewById(R.id.recycler_movie)
         recycler.layoutManager = GridLayoutManager(view.context,2)
         recycler?.adapter = MovieAdapter(listener)
+        var dividerItemDecoration :MovieItemDecoration = MovieItemDecoration(20)
+        recycler.addItemDecoration(dividerItemDecoration)
 
     }
 
