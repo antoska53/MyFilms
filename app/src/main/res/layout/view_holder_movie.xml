@@ -130,6 +130,7 @@
         app:layout_constraintStart_toStartOf="@id/iv_back_avengers_movie"
         app:layout_constraintTop_toBottomOf="@id/iv_avengers_movie"/>
     <TextView
+        android:id="@+id/tv_runtime"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:text="@string/avengers_minutes"
@@ -149,6 +150,7 @@
         app:layout_constraintStart_toStartOf="@id/iv_back_avengers_movie"
         app:layout_constraintTop_toTopOf="@id/iv_back_avengers_movie"/>
     <TextView
+        android:id="@+id/tv_minimum_age"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:text="@string/rectangle_text"

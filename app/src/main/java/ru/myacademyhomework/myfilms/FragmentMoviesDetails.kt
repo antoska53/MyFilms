@@ -10,10 +10,11 @@ import android.widget.TextView
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import ru.myacademyhomework.myfilms.data.Movie
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val NAME_MOVIE = "nameMovie"
+private const val MOVIE = "movie"
 private const val ARG_PARAM2 = "param2"
 
 /**
@@ -23,13 +24,13 @@ private const val ARG_PARAM2 = "param2"
  */
 class FragmentMoviesDetails : Fragment() {
     // TODO: Rename and change types of parameters
-    private var nameMovie: String? = null
+    private var movie: Movie? = null
     private var param2: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-            nameMovie = it.getString(NAME_MOVIE)
+            movie = it.getBundle(MOVIE) as Movie
             param2 = it.getString(ARG_PARAM2)
         }
 
@@ -45,24 +46,25 @@ class FragmentMoviesDetails : Fragment() {
         var ivImageMovie: ImageView = view.findViewById(R.id.main_image)
         var tvMovieDescription: TextView = view.findViewById(R.id.description)
 
-        when (nameMovie) {
-            "avengers" -> {
-                ivImageMovie.setImageResource(R.drawable.avengers)
-                tvMovieDescription.setText(R.string.description_avengers)
-            }
-            "tenet" -> {
-                ivImageMovie.setImageResource(R.drawable.tenet_movie)
-                tvMovieDescription.setText(R.string.description_tenet)
-            }
-            "black widow" -> {
-                ivImageMovie.setImageResource(R.drawable.black_widow_movie)
-                tvMovieDescription.setText(R.string.description_black_widow)
-            }
-            "wonder woman" -> {
-                ivImageMovie.setImageResource(R.drawable.wonder_woman_movie)
-                tvMovieDescription.setText(R.string.description_wonder_woman)
-            }
-        }
+
+//        when (nameMovie) {
+//            "avengers" -> {
+//                ivImageMovie.setImageResource(R.drawable.avengers)
+//                tvMovieDescription.setText(R.string.description_avengers)
+//            }
+//            "tenet" -> {
+//                ivImageMovie.setImageResource(R.drawable.tenet_movie)
+//                tvMovieDescription.setText(R.string.description_tenet)
+//            }
+//            "black widow" -> {
+//                ivImageMovie.setImageResource(R.drawable.black_widow_movie)
+//                tvMovieDescription.setText(R.string.description_black_widow)
+//            }
+//            "wonder woman" -> {
+//                ivImageMovie.setImageResource(R.drawable.wonder_woman_movie)
+//                tvMovieDescription.setText(R.string.description_wonder_woman)
+//            }
+//        }
         return view
     }
 
@@ -86,10 +88,11 @@ class FragmentMoviesDetails : Fragment() {
          */
         // TODO: Rename and change types and number of parameters
         @JvmStatic
-        fun newInstance(param1: String, param2: String) =
+        fun newInstance(param1: Movie, param2: String) =
             FragmentMoviesDetails().apply {
                 arguments = Bundle().apply {
-                    putString(NAME_MOVIE, param1)
+                    putBundle(MOVIE, param1)
+                    
                     putString(ARG_PARAM2, param2)
                 }
             }

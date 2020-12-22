@@ -11,6 +11,12 @@ import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import ru.myacademyhomework.myfilms.data.Movie
+import ru.myacademyhomework.myfilms.data.loadMovies
+import kotlin.coroutines.CoroutineContext
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -27,6 +33,8 @@ class FragmentMoviesList : Fragment() {
     private var param1: String? = null
     private var param2: String? = null
     private var listener: Listener? = null
+    private var listMovies: List<Movie>? = null
+    private var scope: CoroutineScope = CoroutineScope(Dispatchers.IO)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,6 +43,12 @@ class FragmentMoviesList : Fragment() {
             param1 = it.getString(ARG_PARAM1)
             param2 = it.getString(ARG_PARAM2)
         }
+
+        scope.launch {
+            listMovies = context?.let {
+                loadMovies(it) }
+        }
+
     }
 
     override fun onCreateView(
@@ -49,7 +63,7 @@ class FragmentMoviesList : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         var recycler: RecyclerView = view.findViewById(R.id.recycler_movie)
         recycler.layoutManager = GridLayoutManager(view.context,2)
-        recycler?.adapter = MovieAdapter(listener)
+        recycler?.adapter = MovieAdapter(listener, listMovies)
         var dividerItemDecoration :MovieItemDecoration = MovieItemDecoration(20)
         recycler.addItemDecoration(dividerItemDecoration)
 
@@ -64,6 +78,11 @@ class FragmentMoviesList : Fragment() {
         super.onStart()
         //imageView = view?.findViewById(R.id.mask_avengers_movie)
        //imageView?.setOnClickListener(View.OnClickListener { listener?.itemClicked(FragmentMoviesDetails.newInstance("", "")) })
+    }
+
+    override fun onDetach() {
+        super.onDetach()
+        listener = null
     }
 
 
