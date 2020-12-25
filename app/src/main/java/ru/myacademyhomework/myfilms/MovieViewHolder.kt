@@ -21,21 +21,20 @@ class MovieViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         public val TAG :String = "TAG"
     }
 
-    fun onBind(movie: Movie?, listener: FragmentMoviesList.Companion.Listener?) {
+    fun onBind(movie: Movie, listener: FragmentMoviesList.Companion.Listener?) {
         itemView.setOnClickListener(View.OnClickListener {
-            listener?.itemClicked(FragmentMoviesDetails.newInstance(movie, ""))
+            listener?.itemClicked(FragmentMoviesDetails.newInstance(movie.id, ""))
         })
 
-        Log.d(TAG, "onBind: "+ movie?.poster)
         Glide.with(itemView.context)
-            .load(movie?.poster)
+            .load(movie.poster)
             .into(imageMovie)
 
-        tvNameMovie.setText(movie?.title)
-        tvGenre.setText(movie?.genres?.joinToString { genre -> genre.name })
-        tvMinimumAge.setText(movie?.minimumAge.toString())
-        tvReview.setText(movie?.numberOfRatings.toString())
-        tvRuntime.setText(movie?.runtime.toString())
+        tvNameMovie.setText(movie.title)
+        tvGenre.setText(movie.genres?.joinToString { genre -> genre.name })
+        tvMinimumAge.setText(movie.minimumAge.toString())
+        tvReview.setText(movie.numberOfRatings.toString() + " REVIEWS")
+        tvRuntime.setText(movie.runtime.toString() + " MIN")
 
     }
 }

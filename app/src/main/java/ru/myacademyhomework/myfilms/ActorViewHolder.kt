@@ -1,32 +1,24 @@
 package ru.myacademyhomework.myfilms
 
+import android.util.Log
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import ru.myacademyhomework.myfilms.data.Actor
 
 class ActorViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     private var ivActor: ImageView = itemView.findViewById(R.id.iv_actor)
     private var tvActorName: TextView = itemView.findViewById(R.id.tv_actor_name)
 
-    fun onBind(nameActor: String) {
-        when (nameActor) {
-            "Robert Downey Jr" -> {
-                ivActor.setImageResource(R.drawable.robert_downey)
-                tvActorName.setText(R.string.robert_downey_jr)
-            }
-            "Mark Ruffalo" -> {
-                ivActor.setImageResource(R.drawable.mark_ruffalo)
-                tvActorName.setText(R.string.mark_ruffalo)
-            }
-            "Chris Evans" -> {
-                ivActor.setImageResource(R.drawable.chris_evans)
-                tvActorName.setText(R.string.chris_evans)
-            }
-            "Chris Hemsworth" -> {
-                ivActor.setImageResource(R.drawable.chris_hemsworth)
-                tvActorName.setText(R.string.chris_hemsworth)
-            }
-        }
+    fun onBind(actor: Actor) {
+        Log.d(MovieViewHolder.TAG, "onBind: actorName " + actor.name)
+        Log.d(MovieViewHolder.TAG, "onBind: actorPicture " + actor.picture)
+        Glide.with(itemView)
+            .load(actor.picture)
+            .into(ivActor)
+
+        tvActorName.setText(actor.name)
     }
 }

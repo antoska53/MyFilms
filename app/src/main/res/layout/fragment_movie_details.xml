@@ -20,7 +20,7 @@
         <ImageView
             android:id="@+id/main_image"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="300dp"
             android:scaleType="centerCrop"
             tools:src="@drawable/avengers"
             app:layout_constraintLeft_toLeftOf="parent"
@@ -68,6 +68,7 @@
             app:layout_constraintBottom_toTopOf="@id/movieName"/>
 
         <TextView
+            android:id="@+id/tv_minimum_age"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:text="@string/rectangle_text"

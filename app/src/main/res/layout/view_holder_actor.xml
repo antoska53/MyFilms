@@ -8,8 +8,8 @@
 
     <ImageView
         android:id="@+id/iv_actor"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
         app:layout_constraintDimensionRatio="1:1"
         android:scaleType="centerCrop"
         tools:src="@drawable/robert_downey"

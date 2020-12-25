@@ -33,7 +33,7 @@ class FragmentMoviesList : Fragment() {
     private var param1: String? = null
     private var param2: String? = null
     private var listener: Listener? = null
-    private var listMovies: List<Movie>? = null
+    //private var listMovies: List<Movie>? = null
     private var scope: CoroutineScope = CoroutineScope(Dispatchers.IO)
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -45,8 +45,8 @@ class FragmentMoviesList : Fragment() {
         }
 
         scope.launch {
-            listMovies = context?.let {
-                loadMovies(it) }
+            MovieRepository.moviesList = context.let {
+                loadMovies(it!!) }
         }
 
     }
@@ -63,7 +63,7 @@ class FragmentMoviesList : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         var recycler: RecyclerView = view.findViewById(R.id.recycler_movie)
         recycler.layoutManager = GridLayoutManager(view.context,2)
-        recycler?.adapter = MovieAdapter(listener, listMovies)
+        recycler?.adapter = MovieAdapter(listener, MovieRepository.moviesList)
         var dividerItemDecoration :MovieItemDecoration = MovieItemDecoration(20)
         recycler.addItemDecoration(dividerItemDecoration)
 

@@ -10,11 +10,12 @@ import android.widget.TextView
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import ru.myacademyhomework.myfilms.data.Movie
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val MOVIE = "movie"
+private const val MOVIE_ID = "movie_id"
 private const val ARG_PARAM2 = "param2"
 
 /**
@@ -24,15 +25,17 @@ private const val ARG_PARAM2 = "param2"
  */
 class FragmentMoviesDetails : Fragment() {
     // TODO: Rename and change types of parameters
-    private var movie: Movie? = null
+    private var movieId: Int? =null
     private var param2: String? = null
+    private var movie: Movie? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-            movie = it.getBundle(MOVIE) as Movie
+            movieId = it.getInt(MOVIE_ID)
             param2 = it.getString(ARG_PARAM2)
         }
+       movie = MovieRepository.moviesList.first{ it.id == movieId }
 
 
     }
@@ -45,26 +48,21 @@ class FragmentMoviesDetails : Fragment() {
         var view: View = inflater.inflate(R.layout.fragment_movie_details, container, false)
         var ivImageMovie: ImageView = view.findViewById(R.id.main_image)
         var tvMovieDescription: TextView = view.findViewById(R.id.description)
+        val tvNameMovie: TextView = view.findViewById(R.id.movieName)
+        val tvReview :TextView = view.findViewById(R.id.review)
+        val tvGenre :TextView = view.findViewById(R.id.movieGenre)
+        val tvMinimumAge :TextView = view.findViewById(R.id.tv_minimum_age)
 
+        Glide.with(context!!)
+            .load(movie?.backdrop)
+            .into(ivImageMovie)
 
-//        when (nameMovie) {
-//            "avengers" -> {
-//                ivImageMovie.setImageResource(R.drawable.avengers)
-//                tvMovieDescription.setText(R.string.description_avengers)
-//            }
-//            "tenet" -> {
-//                ivImageMovie.setImageResource(R.drawable.tenet_movie)
-//                tvMovieDescription.setText(R.string.description_tenet)
-//            }
-//            "black widow" -> {
-//                ivImageMovie.setImageResource(R.drawable.black_widow_movie)
-//                tvMovieDescription.setText(R.string.description_black_widow)
-//            }
-//            "wonder woman" -> {
-//                ivImageMovie.setImageResource(R.drawable.wonder_woman_movie)
-//                tvMovieDescription.setText(R.string.description_wonder_woman)
-//            }
-//        }
+        tvMovieDescription.setText(movie?.overview)
+        tvNameMovie.setText(movie?.title)
+        tvReview.setText(movie?.numberOfRatings.toString())
+        tvGenre.setText(movie?.genres?.joinToString { genre -> genre.name })
+        tvMinimumAge.setText(movie?.minimumAge.toString())
+
         return view
     }
 
@@ -72,7 +70,7 @@ class FragmentMoviesDetails : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         var recycler: RecyclerView = view.findViewById(R.id.recycler_actor)
         recycler.layoutManager = LinearLayoutManager(context, RecyclerView.HORIZONTAL, false)
-        recycler.adapter = ActorAdapter()
+        recycler.adapter = ActorAdapter(movie?.actors)
         //recycler.addItemDecoration(MovieItemDecoration(20))
 
     }
@@ -88,11 +86,12 @@ class FragmentMoviesDetails : Fragment() {
          */
         // TODO: Rename and change types and number of parameters
         @JvmStatic
-        fun newInstance(param1: Movie, param2: String) =
-            FragmentMoviesDetails().apply {
+        fun newInstance(movieId: Int, param2: String) =
+            FragmentMoviesDetails()
+                .apply {
                 arguments = Bundle().apply {
-                    putBundle(MOVIE, param1)
-                    
+                    putInt(MOVIE_ID, movieId)
+
                     putString(ARG_PARAM2, param2)
                 }
             }

@@ -19,7 +19,7 @@ class MovieAdapter(private val listener: FragmentMoviesList.Companion.Listener?,
 
     override fun onBindViewHolder(holder: MovieViewHolder, position: Int) {
         //holder.onBind(listMovie.get(position), listener)
-        holder.onBind(listMovies?.get(position), listener)
+        holder.onBind(listMovies?.get(position)!!, listener)
     }
 
     override fun getItemCount(): Int {
