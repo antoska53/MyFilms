@@ -27,11 +27,13 @@ class MovieViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         itemView.setOnClickListener(View.OnClickListener {
             listener?.itemClicked(FragmentMoviesDetails.newInstance(movie.id, ""))
         })
+        Log.d(TAG, "onBind: POSTER ${movie.poster}")
 
-        Glide.with(itemView.context)
+        Glide.with(itemView)
             .load(movie.poster)
             .into(imageMovie)
 
+        //imageMovie.setImageResource(R.drawable.avengers_movie)
         tvNameMovie.setText(movie.title)
         tvGenre.setText(movie.genres?.joinToString { genre -> genre.name })
         tvMinimumAge.setText(movie.minimumAge.toString())
