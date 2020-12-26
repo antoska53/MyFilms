@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.RatingBar
 import android.widget.TextView
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -52,6 +53,7 @@ class FragmentMoviesDetails : Fragment() {
         val tvReview :TextView = view.findViewById(R.id.review)
         val tvGenre :TextView = view.findViewById(R.id.movieGenre)
         val tvMinimumAge :TextView = view.findViewById(R.id.tv_minimum_age)
+        val ratingBar :RatingBar = view.findViewById(R.id.rating_bar)
 
         Glide.with(context!!)
             .load(movie?.backdrop)
@@ -62,6 +64,7 @@ class FragmentMoviesDetails : Fragment() {
         tvReview.setText(movie?.numberOfRatings.toString())
         tvGenre.setText(movie?.genres?.joinToString { genre -> genre.name })
         tvMinimumAge.setText(movie?.minimumAge.toString())
+        ratingBar.rating = movie?.ratings?.div(2) ?: 0f
 
         return view
     }

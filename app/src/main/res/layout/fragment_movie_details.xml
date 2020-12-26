@@ -106,55 +106,19 @@
             android:textAppearance="@style/movieGenre"
             app:layout_constraintTop_toBottomOf="@+id/movieName" />
 
-        <ImageView
-            android:id="@+id/star_1"
+        <RatingBar
+            android:id="@+id/rating_bar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginTop="8dp"
-            android:src="@drawable/star_icon_red"
+            android:numStars="5"
+            style="?android:attr/ratingBarStyleSmall"
+            android:theme="@style/MyStyleRatingBar"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/movieGenre" />
+            app:layout_constraintTop_toBottomOf="@id/movieGenre"
 
-        <ImageView
-            android:id="@+id/star_2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="3.25dp"
-            android:layout_marginTop="8dp"
-            android:src="@drawable/star_icon_red"
-            app:layout_constraintStart_toEndOf="@id/star_1"
-            app:layout_constraintTop_toBottomOf="@id/movieGenre" />
-
-        <ImageView
-            android:id="@+id/star_3"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="3.25dp"
-            android:layout_marginTop="8dp"
-            android:src="@drawable/star_icon_red"
-            app:layout_constraintStart_toEndOf="@id/star_2"
-            app:layout_constraintTop_toBottomOf="@id/movieGenre" />
-
-        <ImageView
-            android:id="@+id/star_4"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="3.25dp"
-            android:layout_marginTop="8dp"
-            android:src="@drawable/star_icon_red"
-            app:layout_constraintStart_toEndOf="@id/star_3"
-            app:layout_constraintTop_toBottomOf="@id/movieGenre" />
-
-        <ImageView
-            android:id="@+id/star_5"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="3.25dp"
-            android:layout_marginTop="8dp"
-            android:src="@drawable/star_icon_grey"
-            app:layout_constraintStart_toEndOf="@id/star_4"
-            app:layout_constraintTop_toBottomOf="@id/movieGenre" />
+            />
 
         <TextView
             android:id="@+id/review"
@@ -168,7 +132,7 @@
             android:lineSpacingExtra="4sp"
             android:text="@string/review"
             android:textAppearance="@style/review"
-            app:layout_constraintStart_toEndOf="@id/star_5"
+            app:layout_constraintStart_toEndOf="@id/rating_bar"
             app:layout_constraintTop_toBottomOf="@id/movieGenre" />
 
         <TextView
@@ -180,7 +144,7 @@
             android:layout_marginEnd="16dp"
             android:text="@string/storyline"
             android:textAppearance="@style/storyline"
-            app:layout_constraintTop_toBottomOf="@id/star_1" />
+            app:layout_constraintTop_toBottomOf="@id/rating_bar" />
 
         <TextView
             android:id="@+id/description"

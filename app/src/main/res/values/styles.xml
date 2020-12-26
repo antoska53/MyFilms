@@ -81,4 +81,9 @@
 
         <item name="android:textColor">#FFFFFF</item>
     </style>
+
+    <style name="MyStyleRatingBar" parent="Theme.AppCompat">
+        <item name="colorControlNormal">#6D6D80</item>
+        <item name="colorControlActivated">#FF3365</item>
+    </style>
 </resources>
