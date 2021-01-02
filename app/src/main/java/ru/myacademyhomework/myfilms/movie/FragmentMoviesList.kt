@@ -1,4 +1,4 @@
-package ru.myacademyhomework.myfilms
+package ru.myacademyhomework.myfilms.movie
 
 import android.content.Context
 import android.os.Bundle
@@ -6,17 +6,13 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import androidx.fragment.app.FragmentManager
-import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import ru.myacademyhomework.myfilms.R
 import ru.myacademyhomework.myfilms.data.Movie
-import ru.myacademyhomework.myfilms.data.loadMovies
-import kotlin.coroutines.CoroutineContext
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -33,8 +29,8 @@ class FragmentMoviesList : Fragment() {
     private var param1: String? = null
     private var param2: String? = null
     private var listener: Listener? = null
-    //private var listMovies: List<Movie>? = null
-    private var scope: CoroutineScope = CoroutineScope(Dispatchers.IO)
+    private var viewModel: MovieViewModel? = null
+    private var liveData: LiveData<List<Movie>>? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,10 +40,9 @@ class FragmentMoviesList : Fragment() {
             param2 = it.getString(ARG_PARAM2)
         }
 
-        scope.launch {
-            MovieRepository.moviesList = context.let {
-                loadMovies(it!!) }
-        }
+        viewModel = ViewModelProvider(this).get(MovieViewModel::class.java)
+        liveData = viewModel?.getData()
+
 
     }
 
@@ -56,17 +51,25 @@ class FragmentMoviesList : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-       return inflater.inflate(R.layout.fragment_movies_list, container, false)
+        return inflater.inflate(R.layout.fragment_movies_list, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        var recycler: RecyclerView = view.findViewById(R.id.recycler_movie)
-        recycler.layoutManager = GridLayoutManager(view.context,2)
-        recycler?.adapter = MovieAdapter(listener, MovieRepository.moviesList)
-        var dividerItemDecoration :MovieItemDecoration = MovieItemDecoration(20)
-        recycler.addItemDecoration(dividerItemDecoration)
 
+        viewModel?.liveData?.observe(this.viewLifecycleOwner, Observer<List<Movie>> {
+            initRecycler(view)
+        })
+
+    }
+
+    fun initRecycler(view: View) {
+
+        val recycler: RecyclerView = view.findViewById(R.id.recycler_movie)
+        recycler.layoutManager = GridLayoutManager(view.context, 2)
+        recycler?.adapter = MovieAdapter(listener, liveData?.value)
+        val dividerItemDecoration: MovieItemDecoration = MovieItemDecoration(20)
+        recycler.addItemDecoration(dividerItemDecoration)
     }
 
     override fun onAttach(context: Context) {
@@ -74,18 +77,11 @@ class FragmentMoviesList : Fragment() {
         listener = context as Listener
     }
 
-    override fun onStart() {
-        super.onStart()
-        //imageView = view?.findViewById(R.id.mask_avengers_movie)
-       //imageView?.setOnClickListener(View.OnClickListener { listener?.itemClicked(FragmentMoviesDetails.newInstance("", "")) })
-    }
 
     override fun onDetach() {
         super.onDetach()
         listener = null
     }
-
-
 
 
     companion object {
@@ -106,7 +102,8 @@ class FragmentMoviesList : Fragment() {
                     putString(ARG_PARAM2, param2)
                 }
             }
-        interface Listener{
+
+        interface Listener {
             fun itemClicked(fragment: Fragment)
         }
     }

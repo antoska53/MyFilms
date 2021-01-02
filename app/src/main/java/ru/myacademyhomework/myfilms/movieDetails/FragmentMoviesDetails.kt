@@ -1,4 +1,4 @@
-package ru.myacademyhomework.myfilms
+package ru.myacademyhomework.myfilms.movieDetails
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -8,11 +8,14 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.RatingBar
 import android.widget.TextView
-import androidx.recyclerview.widget.GridLayoutManager
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import ru.myacademyhomework.myfilms.data.Movie
+import ru.myacademyhomework.myfilms.R
+import ru.myacademyhomework.myfilms.data.Actor
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -26,9 +29,24 @@ private const val ARG_PARAM2 = "param2"
  */
 class FragmentMoviesDetails : Fragment() {
     // TODO: Rename and change types of parameters
-    private var movieId: Int? =null
+    private var movieId: Int = -1
     private var param2: String? = null
-    private var movie: Movie? = null
+    private var ivImageMovie: ImageView? = null
+    private var tvMovieDescription: TextView? = null
+    private var tvNameMovie: TextView? = null
+    private var tvReview :TextView? = null
+    private var tvGenre :TextView? = null
+    private var tvMinimumAge :TextView? = null
+    private var ratingBar :RatingBar? = null
+    private var viewModel: MovieDetailViewModel? = null
+    private var liveActorList: LiveData<List<Actor>>? = null
+    private var liveImageMovie: LiveData<String>? = null
+    private var liveMovieDescription: LiveData<String>? = null
+    private var liveNameMovie: LiveData<String>? = null
+    private var liveReview: LiveData<String>? = null
+    private var liveGenre: LiveData<String>? = null
+    private var liveMinimumAge: LiveData<String>? = null
+    private var liveRating: LiveData<Float>? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,9 +54,16 @@ class FragmentMoviesDetails : Fragment() {
             movieId = it.getInt(MOVIE_ID)
             param2 = it.getString(ARG_PARAM2)
         }
-       movie = MovieRepository.moviesList.first{ it.id == movieId }
-
-
+        viewModel = ViewModelProvider(this).get(MovieDetailViewModel::class.java)
+        viewModel?.loadMovie(movieId)
+        liveActorList = viewModel?.getLiveActorList()
+        liveGenre = viewModel?.getLiveGenre()
+        liveImageMovie = viewModel?.getLiveImageMovie()
+        liveMovieDescription = viewModel?.getLiveMovieDescription()
+        liveNameMovie = viewModel?.getLiveNameMovie()
+        liveReview = viewModel?.getLiveReview()
+        liveMinimumAge = viewModel?.getLiveMinimumAge()
+        liveRating = viewModel?.getLiveRating()
     }
 
     override fun onCreateView(
@@ -46,37 +71,46 @@ class FragmentMoviesDetails : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        var view: View = inflater.inflate(R.layout.fragment_movie_details, container, false)
-        var ivImageMovie: ImageView = view.findViewById(R.id.main_image)
-        var tvMovieDescription: TextView = view.findViewById(R.id.description)
-        val tvNameMovie: TextView = view.findViewById(R.id.movieName)
-        val tvReview :TextView = view.findViewById(R.id.review)
-        val tvGenre :TextView = view.findViewById(R.id.movieGenre)
-        val tvMinimumAge :TextView = view.findViewById(R.id.tv_minimum_age)
-        val ratingBar :RatingBar = view.findViewById(R.id.rating_bar)
-
-        Glide.with(context!!)
-            .load(movie?.backdrop)
-            .into(ivImageMovie)
-
-        tvMovieDescription.setText(movie?.overview)
-        tvNameMovie.setText(movie?.title)
-        tvReview.setText(movie?.numberOfRatings.toString())
-        tvGenre.setText(movie?.genres?.joinToString { genre -> genre.name })
-        tvMinimumAge.setText(movie?.minimumAge.toString())
-        ratingBar.rating = movie?.ratings?.div(2) ?: 0f
+        val view: View = inflater.inflate(R.layout.fragment_movie_details, container, false)
+        ivImageMovie = view.findViewById(R.id.main_image)
+        tvMovieDescription = view.findViewById(R.id.description)
+        tvNameMovie = view.findViewById(R.id.movieName)
+        tvReview = view.findViewById(R.id.review)
+        tvGenre = view.findViewById(R.id.movieGenre)
+        tvMinimumAge = view.findViewById(R.id.tv_minimum_age)
+        ratingBar = view.findViewById(R.id.rating_bar)
 
         return view
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        var recycler: RecyclerView = view.findViewById(R.id.recycler_actor)
-        recycler.layoutManager = LinearLayoutManager(context, RecyclerView.HORIZONTAL, false)
-        recycler.adapter = ActorAdapter(movie?.actors)
-        //recycler.addItemDecoration(MovieItemDecoration(20))
+
+        viewModel?.getLiveActorList()?.observe(this.viewLifecycleOwner, Observer<List<Actor>> {
+            initRecycler(view)
+        })
+        viewModel?.getLiveGenre()?.observe(this.viewLifecycleOwner, { tvGenre?.text = it })
+        viewModel?.getLiveNameMovie()?.observe(this.viewLifecycleOwner, { tvNameMovie?.text = it })
+        viewModel?.getLiveReview()?.observe(this.viewLifecycleOwner, { tvReview?.text = it })
+        viewModel?.getLiveMovieDescription()?.observe(this.viewLifecycleOwner, { tvMovieDescription?.text = it })
+        viewModel?.getLiveMinimumAge()?.observe(this.viewLifecycleOwner, { tvMinimumAge?.text = it })
+        viewModel?.getLiveImageMovie()?.observe(this.viewLifecycleOwner, {
+            Glide.with(context!!)
+            .load(it)
+            .into(ivImageMovie!!)
+        })
+        viewModel?.getLiveRating()?.observe(this.viewLifecycleOwner, { ratingBar?.rating = it.div(2) ?: 0f })
 
     }
+
+
+    private fun initRecycler(view: View){
+        var recycler: RecyclerView = view.findViewById(R.id.recycler_actor)
+        recycler.layoutManager = LinearLayoutManager(context, RecyclerView.HORIZONTAL, false)
+        recycler.adapter = ActorAdapter(liveActorList?.value)
+    }
+
+
 
     companion object {
         /**

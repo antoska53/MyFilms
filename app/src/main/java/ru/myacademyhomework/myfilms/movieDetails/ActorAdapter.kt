@@ -1,10 +1,10 @@
-package ru.myacademyhomework.myfilms
+package ru.myacademyhomework.myfilms.movieDetails
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import ru.myacademyhomework.myfilms.R
 import ru.myacademyhomework.myfilms.data.Actor
-import ru.myacademyhomework.myfilms.data.Movie
 
 class ActorAdapter(var actors: List<Actor>?): RecyclerView.Adapter<ActorViewHolder>() {
 

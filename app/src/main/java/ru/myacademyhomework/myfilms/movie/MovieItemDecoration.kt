@@ -1,4 +1,4 @@
-package ru.myacademyhomework.myfilms
+package ru.myacademyhomework.myfilms.movie
 
 import android.graphics.Rect
 import android.view.View
