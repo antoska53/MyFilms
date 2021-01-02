@@ -1,6 +1,7 @@
 package ru.myacademyhomework.myfilms
 
 
+import android.graphics.drawable.Drawable
 import android.util.Log
 import android.view.View
 import android.widget.ImageView
@@ -8,6 +9,10 @@ import android.widget.RatingBar
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.RequestBuilder
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import ru.myacademyhomework.myfilms.data.Movie
 
 class MovieViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -18,6 +23,8 @@ class MovieViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     private val tvRuntime :TextView = itemView.findViewById(R.id.tv_runtime)
     private val tvMinimumAge :TextView = itemView.findViewById(R.id.tv_minimum_age)
     private val ratingBar :RatingBar = itemView.findViewById(R.id.rating_bar)
+    private var scopeIO: CoroutineScope = CoroutineScope(Dispatchers.IO)
+    private var scopeUI: CoroutineScope = CoroutineScope(Dispatchers.Main)
 
     companion object{
         public val TAG :String = "TAG"
@@ -29,9 +36,18 @@ class MovieViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         })
         Log.d(TAG, "onBind: POSTER ${movie.poster}")
 
-        Glide.with(itemView)
+
+//        scopeIO.launch {
+//           val rb = Glide.with(itemView)
+//                        .load(movie.poster)
+//            scopeUI.launch {
+//                rb.into(imageMovie)
+//            }
+//        }
+        Glide.with(itemView.context)
             .load(movie.poster)
             .into(imageMovie)
+
 
         //imageMovie.setImageResource(R.drawable.avengers_movie)
         tvNameMovie.setText(movie.title)
