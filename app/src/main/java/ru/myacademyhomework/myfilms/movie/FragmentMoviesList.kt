@@ -2,6 +2,7 @@ package ru.myacademyhomework.myfilms.movie
 
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -13,6 +14,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import ru.myacademyhomework.myfilms.R
 import ru.myacademyhomework.myfilms.data.Movie
+import ru.myacademyhomework.myfilms.movie.MovieViewHolder.Companion.TAG
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -29,8 +31,10 @@ class FragmentMoviesList : Fragment() {
     private var param1: String? = null
     private var param2: String? = null
     private var listener: Listener? = null
+    private var adapter: MovieAdapter? = null
     private var viewModel: MovieViewModel? = null
     private var liveData: LiveData<List<Movie>>? = null
+    private var recycler: RecyclerView? =null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,8 +46,7 @@ class FragmentMoviesList : Fragment() {
 
         viewModel = ViewModelProvider(this).get(MovieViewModel::class.java)
         liveData = viewModel?.getData()
-
-
+        
     }
 
     override fun onCreateView(
@@ -56,20 +59,24 @@ class FragmentMoviesList : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        initRecycler(view)
 
         viewModel?.liveData?.observe(this.viewLifecycleOwner, Observer<List<Movie>> {
-            initRecycler(view)
+            updateRecycler()
         })
-
     }
 
     fun initRecycler(view: View) {
-
-        val recycler: RecyclerView = view.findViewById(R.id.recycler_movie)
-        recycler.layoutManager = GridLayoutManager(view.context, 2)
-        recycler?.adapter = MovieAdapter(listener, liveData?.value)
+        recycler = view.findViewById(R.id.recycler_movie)
+        recycler?.layoutManager = GridLayoutManager(view.context, 2)
+        adapter = MovieAdapter(listener)
+        recycler?.adapter = adapter//MovieAdapter(listener) //, liveData?.value)
         val dividerItemDecoration: MovieItemDecoration = MovieItemDecoration(20)
-        recycler.addItemDecoration(dividerItemDecoration)
+        recycler?.addItemDecoration(dividerItemDecoration)
+    }
+
+    fun updateRecycler(){
+        adapter?.updateData(liveData?.value)
     }
 
     override fun onAttach(context: Context) {
