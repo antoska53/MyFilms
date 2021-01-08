@@ -39,7 +39,7 @@ class MovieViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
         tvNameMovie.setText(movie.title)
         tvGenre.setText(movie.genres?.joinToString { genre -> genre.name })
-        tvMinimumAge.setText(movie.minimumAge.toString())
+        tvMinimumAge.setText(movie.minimumAge.toString() + "+")
         tvReview.setText(movie.numberOfRatings.toString() + " REVIEWS")
         tvRuntime.setText(movie.runtime.toString() + " MIN")
         ratingBar.setRating(movie.ratings / 2)

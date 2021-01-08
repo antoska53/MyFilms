@@ -62,11 +62,11 @@ class FragmentMoviesList : Fragment() {
         initRecycler(view)
 
         viewModel?.liveData?.observe(this.viewLifecycleOwner, Observer<List<Movie>> {
-            updateRecycler()
+            updateRecycler(it)
         })
     }
 
-    fun initRecycler(view: View) {
+    private fun initRecycler(view: View) {
         recycler = view.findViewById(R.id.recycler_movie)
         recycler?.layoutManager = GridLayoutManager(view.context, 2)
         adapter = MovieAdapter(listener)
@@ -75,8 +75,8 @@ class FragmentMoviesList : Fragment() {
         recycler?.addItemDecoration(dividerItemDecoration)
     }
 
-    fun updateRecycler(){
-        adapter?.updateData(liveData?.value)
+    private fun updateRecycler(list: List<Movie>){
+        adapter?.updateData(list)
     }
 
     override fun onAttach(context: Context) {
@@ -84,10 +84,15 @@ class FragmentMoviesList : Fragment() {
         listener = context as Listener
     }
 
-
     override fun onDetach() {
         super.onDetach()
         listener = null
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        recycler = null
+        adapter = null
     }
 
 

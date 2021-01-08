@@ -130,7 +130,7 @@
                 android:layout_alignParentRight="true"
                 android:layout_centerVertical="true"
                 android:gravity="center_horizontal|center_vertical"
-                android:text="@string/rectangle_text"
+                tools:text="@string/rectangle_text"
                 android:textColor="#FFFFFF"
                 android:textSize="12sp"
                 app:layout_constraintBottom_toBottomOf="@id/rectangle_movie"
