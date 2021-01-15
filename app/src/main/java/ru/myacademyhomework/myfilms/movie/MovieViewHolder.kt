@@ -1,15 +1,12 @@
 package ru.myacademyhomework.myfilms.movie
 
 
-import android.util.Log
 import android.view.View
 import android.widget.ImageView
 import android.widget.RatingBar
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import ru.myacademyhomework.myfilms.movieDetails.FragmentMoviesDetails
 import ru.myacademyhomework.myfilms.R
 import ru.myacademyhomework.myfilms.data.Movie
@@ -25,7 +22,7 @@ class MovieViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
 
     companion object{
-        public val TAG :String = "TAG"
+        val TAG :String = "TAG"
     }
 
     fun onBind(movie: Movie, listener: FragmentMoviesList.Companion.Listener?) {
@@ -37,11 +34,11 @@ class MovieViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
             .load(movie.poster)
             .into(imageMovie)
 
-        tvNameMovie.setText(movie.title)
-        tvGenre.setText(movie.genres?.joinToString { genre -> genre.name })
-        tvMinimumAge.setText(movie.minimumAge.toString() + "+")
-        tvReview.setText(movie.numberOfRatings.toString() + " REVIEWS")
-        tvRuntime.setText(movie.runtime.toString() + " MIN")
-        ratingBar.setRating(movie.ratings / 2)
+        tvNameMovie.text = movie.title
+        tvGenre.text = movie.genres.joinToString { genre -> genre.name }
+        tvMinimumAge.text = movie.minimumAge.toString() + "+"
+        tvReview.text = movie.numberOfRatings.toString() + " REVIEWS"
+        tvRuntime.text = movie.runtime.toString() + " MIN"
+        ratingBar.rating = movie.ratings / 2
     }
 }
