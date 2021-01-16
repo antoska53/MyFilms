@@ -11,8 +11,7 @@ class MovieAdapter(private val listener: FragmentMoviesList.Companion.Listener?)
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MovieViewHolder {
-        var view = LayoutInflater.from(parent.context).inflate(R.layout.view_holder_movie, parent,false)
-        return MovieViewHolder(view)
+        return MovieViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.view_holder_movie, parent,false))
     }
 
     override fun onBindViewHolder(holder: MovieViewHolder, position: Int) {
@@ -20,9 +19,7 @@ class MovieAdapter(private val listener: FragmentMoviesList.Companion.Listener?)
 
     }
 
-    override fun getItemCount(): Int {
-        return listMovie.size
-    }
+    override fun getItemCount(): Int = listMovie.size
 
 
 }

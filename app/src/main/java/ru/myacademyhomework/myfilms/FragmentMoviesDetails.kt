@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.os.bundleOf
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -88,10 +89,10 @@ class FragmentMoviesDetails : Fragment() {
         @JvmStatic
         fun newInstance(param1: String, param2: String) =
             FragmentMoviesDetails().apply {
-                arguments = Bundle().apply {
-                    putString(NAME_MOVIE, param1)
-                    putString(ARG_PARAM2, param2)
-                }
+                arguments = bundleOf(
+                    NAME_MOVIE to param1,
+                    ARG_PARAM2 to param2
+                )
             }
     }
 }
