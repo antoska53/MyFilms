@@ -13,6 +13,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import ru.myacademyhomework.myfilms.R
+import ru.myacademyhomework.myfilms.RetrofitModule
 import ru.myacademyhomework.myfilms.data.Movie
 import ru.myacademyhomework.myfilms.movie.MovieViewHolder.Companion.TAG
 
@@ -35,6 +36,7 @@ class FragmentMoviesList : Fragment() {
     private var viewModel: MovieViewModel? = null
     private var liveData: LiveData<List<Movie>>? = null
     private var recycler: RecyclerView? =null
+    private val movieApi = RetrofitModule.movieApi
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

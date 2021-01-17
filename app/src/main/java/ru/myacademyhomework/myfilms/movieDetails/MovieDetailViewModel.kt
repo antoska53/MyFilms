@@ -62,10 +62,10 @@ class MovieDetailViewModel: ViewModel() {
 
 
     private fun bind(){
-        liveActorList.value = movie?.actors
-        liveGenre.value = movie?.genres?.joinToString { genre -> genre.name }
+        //liveActorList.value = movie?.actors
+        //liveGenre.value = movie?.genres?.joinToString { genre -> genre.name }
         liveImageMovie.value = movie?.backdrop
-        liveMinimumAge.value = movie?.minimumAge.toString() + "+"
+       // liveMinimumAge.value = movie?.minimumAge.toString() + "+"
         liveNameMovie.value = movie?.title
         liveMovieDescription.value = movie?.overview
         liveRating.value = movie?.ratings
