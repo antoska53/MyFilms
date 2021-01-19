@@ -6,7 +6,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
 
-class MovieAdapter(private val listener: FragmentMoviesList.Companion.Listener?): RecyclerView.Adapter<MovieViewHolder>() {
+class MovieAdapter(private val listener: MovieListListener?): RecyclerView.Adapter<MovieViewHolder>() {
     private var listMovie = listOf("avengers", "tenet", "black widow", "wonder woman")
 
 
@@ -15,7 +15,7 @@ class MovieAdapter(private val listener: FragmentMoviesList.Companion.Listener?)
     }
 
     override fun onBindViewHolder(holder: MovieViewHolder, position: Int) {
-        holder.onBind(listMovie.get(position), listener)
+        holder.onBind(listMovie[position], listener)
 
     }
 

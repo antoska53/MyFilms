@@ -4,7 +4,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 
-class ActorAdapter: RecyclerView.Adapter<ActorViewHolder>() {
+class ActorAdapter : RecyclerView.Adapter<ActorViewHolder>() {
     private var listActor = listOf(
         "Robert Downey Jr",
         "Mark Ruffalo",
@@ -13,10 +13,13 @@ class ActorAdapter: RecyclerView.Adapter<ActorViewHolder>() {
         "Robert Downey Jr",
         "Mark Ruffalo",
         "Chris Evans",
-        "Chris Hemsworth")
+        "Chris Hemsworth"
+    )
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ActorViewHolder {
-        return ActorViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.view_holder_actor, parent, false))
+        return ActorViewHolder(
+            LayoutInflater.from(parent.context).inflate(R.layout.view_holder_actor, parent, false)
+        )
     }
 
     override fun onBindViewHolder(holder: ActorViewHolder, position: Int) {

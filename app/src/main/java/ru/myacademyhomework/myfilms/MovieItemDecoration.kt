@@ -14,7 +14,7 @@ class MovieItemDecoration(private var offset: Int) : RecyclerView.ItemDecoration
         state: RecyclerView.State
     ) {
         super.getItemOffsets(outRect, view, parent, state)
-        var layoutParams :GridLayoutManager.LayoutParams = view.layoutParams as GridLayoutManager.LayoutParams
+        val layoutParams :GridLayoutManager.LayoutParams = view.layoutParams as GridLayoutManager.LayoutParams
         if(layoutParams.spanIndex % 2 == 0){
             outRect.top = offset
             outRect.left = offset
