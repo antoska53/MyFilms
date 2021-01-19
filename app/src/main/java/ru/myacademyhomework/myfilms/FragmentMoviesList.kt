@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.FragmentTransaction
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -22,47 +23,33 @@ private const val ARG_PARAM2 = "param2"
  * Use the [FragmentMoviesList.newInstance] factory method to
  * create an instance of this fragment.
  */
-class FragmentMoviesList : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
-    private var listener: Listener? = null
+class FragmentMoviesList : Fragment(R.layout.fragment_movies_list), MovieListListener {
     private val offset: Int = 20
     private val spanCount: Int = 2
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
-    }
-
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_movies_list, container, false)
-    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        var recycler: RecyclerView = view.findViewById(R.id.recycler_movie)
+        val recycler: RecyclerView = view.findViewById(R.id.recycler_movie)
         recycler.layoutManager = GridLayoutManager(view.context, spanCount)
-        recycler?.adapter = MovieAdapter(listener)
-        var dividerItemDecoration: MovieItemDecoration = MovieItemDecoration(offset)
+        recycler.adapter = MovieAdapter(this)
+        val dividerItemDecoration: MovieItemDecoration = MovieItemDecoration(offset)
         recycler.addItemDecoration(dividerItemDecoration)
 
     }
 
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        listener = context as Listener
+
+    override fun itemClicked(fragment: Fragment) {
+        changeFragment(fragment)
     }
 
-
+    private fun changeFragment(fragment: Fragment) {
+        fragmentManager?.beginTransaction()
+            ?.replace(R.id.fragment_container, fragment)
+            ?.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+            ?.addToBackStack(null)
+            ?.commit()
+    }
 
     companion object {
         /**
@@ -75,16 +62,8 @@ class FragmentMoviesList : Fragment() {
          */
         // TODO: Rename and change types and number of parameters
         @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            FragmentMoviesList().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
-            }
+        fun newInstance() =
+            FragmentMoviesList()
 
-        interface Listener {
-            fun itemClicked(fragment: Fragment)
-        }
     }
 }

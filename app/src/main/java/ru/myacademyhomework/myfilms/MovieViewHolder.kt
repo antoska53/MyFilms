@@ -10,9 +10,9 @@ class MovieViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     private val imageMovie: ImageView = itemView.findViewById(R.id.iv_avengers_movie)
     private val tvNameMovie: TextView = itemView.findViewById(R.id.tv_name)
 
-    fun onBind(nameMovie: String, listener: FragmentMoviesList.Companion.Listener?) {
+    fun onBind(nameMovie: String, listener: MovieListListener?) {
         itemView.setOnClickListener(View.OnClickListener {
-            listener?.itemClicked(FragmentMoviesDetails.newInstance(nameMovie, ""))
+            listener?.itemClicked(FragmentMoviesDetails.newInstance(nameMovie))
         })
         imageMovie.setImageResource(R.drawable.avengers_movie)
         when (nameMovie) {
