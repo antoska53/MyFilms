@@ -1,8 +1,23 @@
 <resources>
     <string name="app_name">MyFilms</string>
-    <string name="movieName">Avengers: End Game</string>
+    <string name="movie_name_avengers">Avengers: End Game</string>
+    <string name="movie_wonder_woman">Wonder woman</string>
+    <string name="movie_name_tenet">Tenet</string>
+    <string name="movie_name_black_widow">Black Widow</string>
     <string name="movie_genre">Action, Adventure, Fantasy</string>
-    <string name="description">After the devastating events of Avengers:
+    <string name="description_avengers">After the devastating events of Avengers:
+        Infinity War, the universe is in ruins. With the help of remaining allies,
+        the Avengers assemble once more in order to reverse
+        Thanos actions and restore balance to the universe.</string>
+    <string name="description_wonder_woman">After the devastating events of Avengers:
+        Infinity War, the universe is in ruins. With the help of remaining allies,
+        the Avengers assemble once more in order to reverse
+        Thanos actions and restore balance to the universe.</string>
+    <string name="description_tenet">After the devastating events of Avengers:
+        Infinity War, the universe is in ruins. With the help of remaining allies,
+        the Avengers assemble once more in order to reverse
+        Thanos actions and restore balance to the universe.</string>
+    <string name="description_black_widow">After the devastating events of Avengers:
         Infinity War, the universe is in ruins. With the help of remaining allies,
         the Avengers assemble once more in order to reverse
         Thanos actions and restore balance to the universe.</string>
