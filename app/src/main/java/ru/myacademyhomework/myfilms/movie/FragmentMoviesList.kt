@@ -2,7 +2,6 @@ package ru.myacademyhomework.myfilms.movie
 
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -13,9 +12,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import ru.myacademyhomework.myfilms.R
-import ru.myacademyhomework.myfilms.RetrofitModule
-import ru.myacademyhomework.myfilms.data.Movie
-import ru.myacademyhomework.myfilms.movie.MovieViewHolder.Companion.TAG
+import ru.myacademyhomework.myfilms.network.MovieNetworkModel
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -34,9 +31,8 @@ class FragmentMoviesList : Fragment() {
     private var listener: Listener? = null
     private var adapter: MovieAdapter? = null
     private var viewModel: MovieViewModel? = null
-    private var liveData: LiveData<List<Movie>>? = null
+    private var liveData: LiveData<List<MovieNetworkModel>>? = null
     private var recycler: RecyclerView? =null
-    private val movieApi = RetrofitModule.movieApi
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -63,7 +59,7 @@ class FragmentMoviesList : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         initRecycler(view)
 
-        viewModel?.liveData?.observe(this.viewLifecycleOwner, Observer<List<Movie>> {
+        viewModel?.liveData?.observe(this.viewLifecycleOwner, Observer<List<MovieNetworkModel>> {
             updateRecycler(it)
         })
     }
@@ -77,7 +73,7 @@ class FragmentMoviesList : Fragment() {
         recycler?.addItemDecoration(dividerItemDecoration)
     }
 
-    private fun updateRecycler(list: List<Movie>){
+    private fun updateRecycler(list: List<MovieNetworkModel>){
         adapter?.updateData(list)
     }
 

@@ -7,9 +7,10 @@ import android.widget.RatingBar
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import ru.myacademyhomework.myfilms.BuildConfig
 import ru.myacademyhomework.myfilms.movieDetails.FragmentMoviesDetails
 import ru.myacademyhomework.myfilms.R
-import ru.myacademyhomework.myfilms.data.Movie
+import ru.myacademyhomework.myfilms.network.MovieNetworkModel
 
 class MovieViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     private val imageMovie: ImageView = itemView.findViewById(R.id.iv_avengers_movie)
@@ -25,20 +26,21 @@ class MovieViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val TAG :String = "TAG"
     }
 
-    fun onBind(movie: Movie, listener: FragmentMoviesList.Companion.Listener?) {
+    fun onBind(movie: MovieNetworkModel, listener: FragmentMoviesList.Companion.Listener?) {
         itemView.setOnClickListener(View.OnClickListener {
-            listener?.itemClicked(FragmentMoviesDetails.newInstance(movie.id, ""))
+            listener?.itemClicked(FragmentMoviesDetails.newInstance(movie.movieId, ""))
         })
 
         Glide.with(itemView.context)
-            .load(movie.poster)
+            .load(BuildConfig.BASE_IMAGE_URL + movie.posterPath)
             .into(imageMovie)
 
         tvNameMovie.text = movie.title
         //tvGenre.text = movie.genres.joinToString { genre -> genre.name }
-        tvMinimumAge.text = movie.minimumAge.toString() + "+"
-        tvReview.text = movie.numberOfRatings.toString() + " REVIEWS"
-        tvRuntime.text = movie.runtime.toString() + " MIN"
-        ratingBar.rating = movie.ratings / 2
+        tvGenre.text = "tratata"
+        tvMinimumAge.text = if(movie.adult) "16+" else "13+"
+        tvReview.text = movie.voteCount.toString() + " REVIEWS"
+        tvRuntime.text = "999 MIN" //movie.runtime.toString() + " MIN"
+        ratingBar.rating = movie.voteAverage.toFloat() //movie.ratings / 2
     }
 }

@@ -4,11 +4,11 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import ru.myacademyhomework.myfilms.R
-import ru.myacademyhomework.myfilms.data.Movie
+import ru.myacademyhomework.myfilms.network.MovieNetworkModel
 
 class MovieAdapter(private val listener: FragmentMoviesList.Companion.Listener?): RecyclerView.Adapter<MovieViewHolder>() {
 
-    private var listMovies: List<Movie>? = null
+    private var listMovies: List<MovieNetworkModel>? = listOf()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MovieViewHolder {
         var view = LayoutInflater.from(parent.context).inflate(R.layout.view_holder_movie, parent,false)
@@ -23,7 +23,7 @@ class MovieAdapter(private val listener: FragmentMoviesList.Companion.Listener?)
         return listMovies!!.size
     }
 
-    fun updateData(list: List<Movie>?){
+    fun updateData(list: List<MovieNetworkModel>?){
         listMovies = list
         notifyDataSetChanged()
     }

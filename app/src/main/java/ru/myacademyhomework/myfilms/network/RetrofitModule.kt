@@ -1,4 +1,4 @@
-package ru.myacademyhomework.myfilms
+package ru.myacademyhomework.myfilms.network
 
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import kotlinx.serialization.json.Json
@@ -7,6 +7,7 @@ import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.create
+import ru.myacademyhomework.myfilms.BuildConfig
 
 object RetrofitModule {
     private val json: Json = Json{ignoreUnknownKeys = true}
