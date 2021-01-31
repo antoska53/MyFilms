@@ -1,15 +1,16 @@
 package ru.myacademyhomework.myfilms.movieDetails
 
 import androidx.lifecycle.*
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import ru.myacademyhomework.myfilms.MyApplication
+import kotlinx.coroutines.withContext
+import ru.myacademyhomework.myfilms.BuildConfig
 import ru.myacademyhomework.myfilms.data.Actor
-import ru.myacademyhomework.myfilms.data.Movie
-import ru.myacademyhomework.myfilms.data.loadMovies
+import ru.myacademyhomework.myfilms.data.ActorsInfo
+import ru.myacademyhomework.myfilms.movie.MovieInfo
+import ru.myacademyhomework.myfilms.network.RetrofitModule
 
 class MovieDetailViewModel: ViewModel() {
-    private var movie: Movie? = null
     private val liveActorList =  MutableLiveData<List<Actor>>()
     private val liveImageMovie = MutableLiveData<String>()
     private val liveMovieDescription = MutableLiveData<String>()
@@ -21,8 +22,13 @@ class MovieDetailViewModel: ViewModel() {
 
     fun loadMovie(id: Int){
        viewModelScope.launch {
-            movie = loadMovies(MyApplication.getInstance()).first { movie -> movie.id == id }
-            bind()
+           val movieInfo: MovieInfo
+           val actors: ActorsInfo
+            withContext(Dispatchers.IO){
+                movieInfo = RetrofitModule.movieApi.getMovieInfo(id, BuildConfig.API_KEY)
+                actors = RetrofitModule.movieApi.getActors(id, BuildConfig.API_KEY)
+            }
+           bind(movieInfo, actors)
         }
 
     }
@@ -61,15 +67,15 @@ class MovieDetailViewModel: ViewModel() {
 
 
 
-    private fun bind(){
-        //liveActorList.value = movie?.actors
-        //liveGenre.value = movie?.genres?.joinToString { genre -> genre.name }
-        liveImageMovie.value = movie?.backdrop
-       // liveMinimumAge.value = movie?.minimumAge.toString() + "+"
-        liveNameMovie.value = movie?.title
-        liveMovieDescription.value = movie?.overview
-        liveRating.value = movie?.ratings
-        liveReview.value = movie?.numberOfRatings.toString()
+    private fun bind(movieInfo: MovieInfo, actors: ActorsInfo){
+        liveActorList.value = actors.cast
+        liveGenre.value = movieInfo.genres.joinToString { genre -> genre.name }
+        liveImageMovie.value = movieInfo.backdropPath
+        liveMinimumAge.value = if(movieInfo.adult) "16+" else "13+"
+        liveNameMovie.value = movieInfo.title
+        liveMovieDescription.value = movieInfo.overview
+        liveRating.value = movieInfo.voteAverage
+        liveReview.value = movieInfo.voteCount.toString()
     }
 
 

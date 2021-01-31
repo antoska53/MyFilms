@@ -1,6 +1,7 @@
 package ru.myacademyhomework.myfilms.movie
 
 import android.content.Context
+import android.content.res.Configuration
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -12,6 +13,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import ru.myacademyhomework.myfilms.R
+import ru.myacademyhomework.myfilms.data.Movie
 import ru.myacademyhomework.myfilms.network.MovieNetworkModel
 
 // TODO: Rename parameter arguments, choose names that match
@@ -31,8 +33,8 @@ class FragmentMoviesList : Fragment() {
     private var listener: Listener? = null
     private var adapter: MovieAdapter? = null
     private var viewModel: MovieViewModel? = null
-    private var liveData: LiveData<List<MovieNetworkModel>>? = null
-    private var recycler: RecyclerView? =null
+    private var liveData: LiveData<List<Movie>>? = null
+    private var recycler: RecyclerView? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,7 +46,7 @@ class FragmentMoviesList : Fragment() {
 
         viewModel = ViewModelProvider(this).get(MovieViewModel::class.java)
         liveData = viewModel?.getData()
-        
+
     }
 
     override fun onCreateView(
@@ -59,21 +61,24 @@ class FragmentMoviesList : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         initRecycler(view)
 
-        viewModel?.liveData?.observe(this.viewLifecycleOwner, Observer<List<MovieNetworkModel>> {
+        viewModel?.liveData?.observe(this.viewLifecycleOwner, Observer<List<Movie>> {
             updateRecycler(it)
         })
     }
 
     private fun initRecycler(view: View) {
         recycler = view.findViewById(R.id.recycler_movie)
-        recycler?.layoutManager = GridLayoutManager(view.context, 2)
+        recycler?.layoutManager =
+            if (resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT)
+                GridLayoutManager(view.context, 2)
+            else GridLayoutManager(view.context, 4)
         adapter = MovieAdapter(listener)
         recycler?.adapter = adapter//MovieAdapter(listener) //, liveData?.value)
         val dividerItemDecoration: MovieItemDecoration = MovieItemDecoration(20)
         recycler?.addItemDecoration(dividerItemDecoration)
     }
 
-    private fun updateRecycler(list: List<MovieNetworkModel>){
+    private fun updateRecycler(list: List<Movie>) {
         adapter?.updateData(list)
     }
 

@@ -18,7 +18,7 @@ data class Movie(
     @SerialName("vote_average")
     val ratings: Float,
     @SerialName("vote_count")
-    val numberOfRatings: Int,
+    val numberOfRatings: Long,
 
     val minimumAge: Int,
 

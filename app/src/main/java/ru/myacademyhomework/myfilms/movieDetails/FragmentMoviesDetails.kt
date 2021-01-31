@@ -14,8 +14,10 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import ru.myacademyhomework.myfilms.BuildConfig
 import ru.myacademyhomework.myfilms.R
 import ru.myacademyhomework.myfilms.data.Actor
+import ru.myacademyhomework.myfilms.movie.MovieAdapter
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -38,6 +40,7 @@ class FragmentMoviesDetails : Fragment() {
     private var tvGenre :TextView? = null
     private var tvMinimumAge :TextView? = null
     private var ratingBar :RatingBar? = null
+    private var adapter: ActorAdapter? = null
     private var viewModel: MovieDetailViewModel? = null
     private var liveActorList: LiveData<List<Actor>>? = null
     private var liveImageMovie: LiveData<String>? = null
@@ -85,9 +88,10 @@ class FragmentMoviesDetails : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        initRecycler(view)
 
         viewModel?.getLiveActorList()?.observe(this.viewLifecycleOwner, Observer<List<Actor>> {
-            initRecycler(view)
+           updateRecycler(it)
         })
         viewModel?.getLiveGenre()?.observe(this.viewLifecycleOwner, { tvGenre?.text = it })
         viewModel?.getLiveNameMovie()?.observe(this.viewLifecycleOwner, { tvNameMovie?.text = it })
@@ -96,10 +100,12 @@ class FragmentMoviesDetails : Fragment() {
         viewModel?.getLiveMinimumAge()?.observe(this.viewLifecycleOwner, { tvMinimumAge?.text = it })
         viewModel?.getLiveImageMovie()?.observe(this.viewLifecycleOwner, {
             Glide.with(context!!)
-            .load(it)
+            .load(BuildConfig.BASE_IMAGE_URL + it)
             .into(ivImageMovie!!)
         })
-        viewModel?.getLiveRating()?.observe(this.viewLifecycleOwner, { ratingBar?.rating = it.div(2) ?: 0f })
+        viewModel?.getLiveRating()?.observe(this.viewLifecycleOwner, { ratingBar?.rating =
+            (it.div(2) ?: 0)  as Float
+        })
 
     }
 
@@ -107,10 +113,13 @@ class FragmentMoviesDetails : Fragment() {
     private fun initRecycler(view: View){
         var recycler: RecyclerView = view.findViewById(R.id.recycler_actor)
         recycler.layoutManager = LinearLayoutManager(context, RecyclerView.HORIZONTAL, false)
-        recycler.adapter = ActorAdapter(liveActorList?.value)
+        adapter = ActorAdapter()
+        recycler.adapter = adapter
     }
 
-
+    private fun updateRecycler(listActors: List<Actor>){
+        adapter?.updateData(listActors)
+    }
 
     companion object {
         /**
