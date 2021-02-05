@@ -7,10 +7,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.buffer
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.flow.toList
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import ru.myacademyhomework.myfilms.BuildConfig
 import ru.myacademyhomework.myfilms.data.Movie
@@ -26,32 +23,11 @@ class MovieViewModel : ViewModel() {
 
     fun loadData() {
         viewModelScope.launch {
-//            mutableLiveData.value = flowOf(movieApi.getMovies(BuildConfig.API_KEY))
-//                .flatMapMerge { it.movies.asFlow() }
-//                .map { it ->
-//                    val movie = movieApi.getMovieInfo(it.movieId, BuildConfig.API_KEY)
-//                    Movie(
-//                        id = movie.id,
-//                        title = movie.title,
-//                        overview = movie.overview,
-//                        poster = movie.posterPath,
-//                        backdrop = movie.backdropPath,
-//                        ratings = movie.voteAverage,
-//                        numberOfRatings = movie.voteCount,
-//                        minimumAge = if (movie.adult) 16 else 13,
-//                        runtime = movie.runtime,
-//                        genres = movie.genres,
-//                        actors = listOf()
-//                    )
-//                }
-//                .flowOn(Dispatchers.IO)
-//                .toList()
-
-            val movieTopResponse = movieApi.getMovies(BuildConfig.API_KEY)
-            val time = measureTimeMillis {
-                mutableLiveData.value = flow {
-                    for (m in movieTopResponse.movies) {
-                        val movie = movieApi.getMovieInfo(m.movieId, BuildConfig.API_KEY)
+            mutableLiveData.value = flowOf(movieApi.getMovies(BuildConfig.API_KEY))
+                .flatMapLatest { it.movies.asFlow() }
+                .flatMapMerge { it ->
+                    flow {
+                        val movie = movieApi.getMovieInfo(it.movieId, BuildConfig.API_KEY)
                         emit(
                             Movie(
                                 id = movie.id,
@@ -69,11 +45,54 @@ class MovieViewModel : ViewModel() {
                         )
                     }
                 }
-                    .flowOn(Dispatchers.IO)
-                    .buffer()
-                    .toList()
-            }
-            println(" time - $time ms")
+                .flowOn(Dispatchers.IO)
+                .catch {
+                    Log.d(TAG, "loadData catch: $it")
+                    emit(
+                        Movie(
+                            id = 0,
+                            title = "error",
+                            overview = "error",
+                            poster = "error",
+                            backdrop = "error",
+                            ratings = 0f,
+                            numberOfRatings = 0,
+                            minimumAge = 0,
+                            runtime = 0,
+                            genres = listOf(),
+                            actors = listOf()
+                        )
+                    )
+                }
+                .toList()
+
+//            val movieTopResponse = movieApi.getMovies(BuildConfig.API_KEY)
+//            val time = measureTimeMillis {
+//                mutableLiveData.value = flow {
+//                    for (m in movieTopResponse.movies) {
+//                        val movie = movieApi.getMovieInfo(m.movieId, BuildConfig.API_KEY)
+//                        emit(
+//                            Movie(
+//                                id = movie.id,
+//                                title = movie.title,
+//                                overview = movie.overview,
+//                                poster = movie.posterPath,
+//                                backdrop = movie.backdropPath,
+//                                ratings = movie.voteAverage,
+//                                numberOfRatings = movie.voteCount,
+//                                minimumAge = if (movie.adult) 16 else 13,
+//                                runtime = movie.runtime,
+//                                genres = movie.genres,
+//                                actors = listOf()
+//                            )
+//                        )
+//                    }
+//                }
+//                    //.flowOn(Dispatchers.IO)
+//                    .buffer()
+//                    .toList()
+//            }
+//            println(" time - $time ms")
         }
     }
 
