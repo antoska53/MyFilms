@@ -7,6 +7,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -14,7 +15,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import ru.myacademyhomework.myfilms.R
 import ru.myacademyhomework.myfilms.data.Movie
-import ru.myacademyhomework.myfilms.network.MovieNetworkModel
+import ru.myacademyhomework.myfilms.network.*
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -33,7 +34,7 @@ class FragmentMoviesList : Fragment() {
     private var listener: Listener? = null
     private var adapter: MovieAdapter? = null
     private var viewModel: MovieViewModel? = null
-    private var liveData: LiveData<List<Movie>>? = null
+    private var liveData: LiveData<MovieResult>? = null
     private var recycler: RecyclerView? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -45,7 +46,10 @@ class FragmentMoviesList : Fragment() {
         }
 
         viewModel = ViewModelProvider(this).get(MovieViewModel::class.java)
-        liveData = viewModel?.getData()
+
+        if (savedInstanceState == null) {
+            liveData = viewModel?.getData()
+        }
 
     }
 
@@ -61,7 +65,7 @@ class FragmentMoviesList : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         initRecycler(view)
 
-        viewModel?.liveData?.observe(this.viewLifecycleOwner, Observer<List<Movie>> {
+        viewModel?.liveData?.observe(this.viewLifecycleOwner, Observer<MovieResult> {
             updateRecycler(it)
         })
     }
@@ -78,8 +82,18 @@ class FragmentMoviesList : Fragment() {
         recycler?.addItemDecoration(dividerItemDecoration)
     }
 
-    private fun updateRecycler(list: List<Movie>) {
-        adapter?.updateData(list)
+    private fun updateRecycler(result: MovieResult) {
+        when(result){
+            is SuccessResult -> adapter?.updateData(result.listMovies)
+            is ErrorResult -> {
+                adapter?.updateData(emptyList())
+                Toast.makeText(context, "Ошибка при загузке, попробуйте снова", Toast.LENGTH_LONG).show()
+            }
+            is TerminalError -> {
+                adapter?.updateData(emptyList())
+                Toast.makeText(context, "Неизвестная ошибка", Toast.LENGTH_LONG).show()
+            }
+        }
     }
 
     override fun onAttach(context: Context) {

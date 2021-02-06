@@ -8,7 +8,7 @@ import ru.myacademyhomework.myfilms.data.ActorsInfo
 
 interface MovieApi {
     @GET("movie/top_rated")
-    suspend fun getMovies(@Query("api_key") api_key: String): MovieTopResponse
+    suspend fun getMoviesId(@Query("api_key") api_key: String): MovieTopResponse
 
     @GET("movie/{movie_id}")
     suspend fun getMovieInfo(@Path("movie_id") id: Int, @Query("api_key") api_key: String): MovieInfo
