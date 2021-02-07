@@ -14,17 +14,8 @@ data class MovieInfo (
 
     @SerialName("backdrop_path")
     val backdropPath: String,
-
-//    @SerialName("belongs_to_collection")
-//    val belongsToCollection: Unit? = null,
-
-    val budget: Long,
     val genres: List<Genre>,
-    val homepage: String,
     val id: Int,
-
-//    @SerialName("imdb_id")
-//    val imdbID: String,
 
     @SerialName("original_language")
     val originalLanguage: String,
@@ -44,14 +35,7 @@ data class MovieInfo (
     @SerialName("production_countries")
     val productionCountries: List<ProductionCountry>,
 
-    @SerialName("release_date")
-    val releaseDate: String,
-
-    val revenue: Long,
     val runtime: Int,
-
-    @SerialName("spoken_languages")
-    val spokenLanguages: List<SpokenLanguage>,
 
     val status: String,
     val tagline: String,

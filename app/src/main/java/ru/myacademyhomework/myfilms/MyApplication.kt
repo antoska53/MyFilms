@@ -1,6 +1,8 @@
 package ru.myacademyhomework.myfilms
 
 import android.app.Application
+import androidx.room.Room
+import ru.myacademyhomework.myfilms.db.MovieDataBase
 
 class MyApplication : Application()   {
 

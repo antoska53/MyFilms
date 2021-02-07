@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.RatingBar
 import android.widget.TextView
+import android.widget.Toast
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -17,7 +18,12 @@ import com.bumptech.glide.Glide
 import ru.myacademyhomework.myfilms.BuildConfig
 import ru.myacademyhomework.myfilms.R
 import ru.myacademyhomework.myfilms.data.Actor
+import ru.myacademyhomework.myfilms.data.Movie
 import ru.myacademyhomework.myfilms.movie.MovieAdapter
+import ru.myacademyhomework.myfilms.network.ErrorResult
+import ru.myacademyhomework.myfilms.network.MovieResult
+import ru.myacademyhomework.myfilms.network.SuccessActorResult
+import ru.myacademyhomework.myfilms.network.SuccessDetailResult
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -42,14 +48,6 @@ class FragmentMoviesDetails : Fragment() {
     private var ratingBar :RatingBar? = null
     private var adapter: ActorAdapter? = null
     private var viewModel: MovieDetailViewModel? = null
-    private var liveActorList: LiveData<List<Actor>>? = null
-    private var liveImageMovie: LiveData<String>? = null
-    private var liveMovieDescription: LiveData<String>? = null
-    private var liveNameMovie: LiveData<String>? = null
-    private var liveReview: LiveData<String>? = null
-    private var liveGenre: LiveData<String>? = null
-    private var liveMinimumAge: LiveData<String>? = null
-    private var liveRating: LiveData<Float>? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -58,15 +56,11 @@ class FragmentMoviesDetails : Fragment() {
             param2 = it.getString(ARG_PARAM2)
         }
         viewModel = ViewModelProvider(this).get(MovieDetailViewModel::class.java)
-        viewModel?.loadMovie(movieId)
-        liveActorList = viewModel?.getLiveActorList()
-        liveGenre = viewModel?.getLiveGenre()
-        liveImageMovie = viewModel?.getLiveImageMovie()
-        liveMovieDescription = viewModel?.getLiveMovieDescription()
-        liveNameMovie = viewModel?.getLiveNameMovie()
-        liveReview = viewModel?.getLiveReview()
-        liveMinimumAge = viewModel?.getLiveMinimumAge()
-        liveRating = viewModel?.getLiveRating()
+        if(savedInstanceState == null) {
+            viewModel?.loadMovieFromDb(movieId)
+            viewModel?.loadMovie(movieId)
+        }
+
     }
 
     override fun onCreateView(
@@ -90,24 +84,22 @@ class FragmentMoviesDetails : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         initRecycler(view)
 
-        viewModel?.getLiveActorList()?.observe(this.viewLifecycleOwner, Observer<List<Actor>> {
-           updateRecycler(it)
-        })
-        viewModel?.getLiveGenre()?.observe(this.viewLifecycleOwner, { tvGenre?.text = it })
-        viewModel?.getLiveNameMovie()?.observe(this.viewLifecycleOwner, { tvNameMovie?.text = it })
-        viewModel?.getLiveReview()?.observe(this.viewLifecycleOwner, { tvReview?.text = it })
-        viewModel?.getLiveMovieDescription()?.observe(this.viewLifecycleOwner, { tvMovieDescription?.text = it })
-        viewModel?.getLiveMinimumAge()?.observe(this.viewLifecycleOwner, { tvMinimumAge?.text = it })
-        viewModel?.getLiveImageMovie()?.observe(this.viewLifecycleOwner, {
-            Glide.with(context!!)
-            .load(BuildConfig.BASE_IMAGE_URL + it)
-            .into(ivImageMovie!!)
-        })
-        viewModel?.getLiveRating()?.observe(this.viewLifecycleOwner, { ratingBar?.rating =
-            (it.div(2) ?: 0)  as Float
-        })
+        viewModel?.liveActors?.observe(this.viewLifecycleOwner, Observer<MovieResult> {
+           when(it){
+               is SuccessActorResult -> updateRecycler(it.actors)
+               is ErrorResult -> Toast.makeText(context, "Ошибка при загузке, попробуйте снова", Toast.LENGTH_LONG)
+                   .show()
+           }
 
-    }
+        })
+        viewModel?.liveMovie?.observe(this.viewLifecycleOwner, {
+            when(it){
+                is SuccessDetailResult -> updateData(it.movieInfo)
+                is ErrorResult -> Toast.makeText(context, "Ошибка при загузке, попробуйте снова", Toast.LENGTH_LONG)
+                    .show()
+            }
+        })
+        }
 
 
     private fun initRecycler(view: View){
@@ -119,6 +111,18 @@ class FragmentMoviesDetails : Fragment() {
 
     private fun updateRecycler(listActors: List<Actor>){
         adapter?.updateData(listActors)
+    }
+
+    private fun updateData(movie: Movie){
+        Glide.with(context!!)
+            .load(BuildConfig.BASE_IMAGE_URL + movie.backdrop)
+            .into(ivImageMovie!!)
+        tvMovieDescription?.text = movie.overview
+        tvNameMovie?.text = movie.title
+        tvReview?.text = movie.numberOfRatings.toString()
+        tvGenre?.text = movie.genres.joinToString { ", " }
+        tvMinimumAge?.text = movie.minimumAge.toString()
+        ratingBar?.rating = movie.ratings
     }
 
     companion object {

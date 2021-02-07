@@ -3,6 +3,7 @@ package ru.myacademyhomework.myfilms.movie
 import android.content.Context
 import android.content.res.Configuration
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -15,6 +16,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import ru.myacademyhomework.myfilms.R
 import ru.myacademyhomework.myfilms.data.Movie
+import ru.myacademyhomework.myfilms.movie.MovieViewHolder.Companion.TAG
 import ru.myacademyhomework.myfilms.network.*
 
 // TODO: Rename parameter arguments, choose names that match
@@ -34,7 +36,6 @@ class FragmentMoviesList : Fragment() {
     private var listener: Listener? = null
     private var adapter: MovieAdapter? = null
     private var viewModel: MovieViewModel? = null
-    private var liveData: LiveData<MovieResult>? = null
     private var recycler: RecyclerView? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -48,7 +49,8 @@ class FragmentMoviesList : Fragment() {
         viewModel = ViewModelProvider(this).get(MovieViewModel::class.java)
 
         if (savedInstanceState == null) {
-            liveData = viewModel?.getData()
+            viewModel?.getDataFromDb()
+            viewModel?.getData()
         }
 
     }
@@ -87,7 +89,9 @@ class FragmentMoviesList : Fragment() {
             is SuccessResult -> adapter?.updateData(result.listMovies)
             is ErrorResult -> {
                 adapter?.updateData(emptyList())
-                Toast.makeText(context, "Ошибка при загузке, попробуйте снова", Toast.LENGTH_LONG).show()
+                Toast.makeText(context, "Ошибка при загузке, попробуйте снова", Toast.LENGTH_LONG)
+                    .show()
+                Log.d(TAG, "updateRecycler: ${result.e}")
             }
             is TerminalError -> {
                 adapter?.updateData(emptyList())

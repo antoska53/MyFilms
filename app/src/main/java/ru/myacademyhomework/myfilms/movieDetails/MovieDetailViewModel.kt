@@ -7,76 +7,66 @@ import kotlinx.coroutines.withContext
 import ru.myacademyhomework.myfilms.BuildConfig
 import ru.myacademyhomework.myfilms.data.Actor
 import ru.myacademyhomework.myfilms.data.ActorsInfo
+import ru.myacademyhomework.myfilms.data.Movie
+import ru.myacademyhomework.myfilms.db.ConverterDb
+import ru.myacademyhomework.myfilms.db.MovieDataBase
 import ru.myacademyhomework.myfilms.movie.MovieInfo
-import ru.myacademyhomework.myfilms.network.RetrofitModule
+import ru.myacademyhomework.myfilms.network.*
 
-class MovieDetailViewModel: ViewModel() {
-    private val liveActorList =  MutableLiveData<List<Actor>>()
-    private val liveImageMovie = MutableLiveData<String>()
-    private val liveMovieDescription = MutableLiveData<String>()
-    private val liveNameMovie = MutableLiveData<String>()
-    private val liveReview = MutableLiveData<String>()
-    private val liveGenre = MutableLiveData<String>()
-    private val liveMinimumAge = MutableLiveData<String>()
-    private val liveRating = MutableLiveData<Float>()
+class MovieDetailViewModel : ViewModel() {
+    private val mutableLiveMovie = MutableLiveData<MovieResult>()
+    val liveMovie = mutableLiveMovie
+    private val mutableLiveActors = MutableLiveData<MovieResult>()
+    val liveActors = mutableLiveActors
+    val movieDataBase = MovieDataBase.movieDataBase
 
-    fun loadMovie(id: Int){
-       viewModelScope.launch {
-           val movieInfo: MovieInfo
-           val actors: ActorsInfo
-            withContext(Dispatchers.IO){
-                movieInfo = RetrofitModule.movieApi.getMovieInfo(id, BuildConfig.API_KEY)
-                actors = RetrofitModule.movieApi.getActors(id, BuildConfig.API_KEY)
+
+    fun loadMovie(id: Int) {
+        viewModelScope.launch {
+            try {
+                val movieInfo = RetrofitModule.movieApi.getMovieInfo(id, BuildConfig.API_KEY)
+                liveMovie.value = SuccessDetailResult(
+                    Movie(
+                        id = movieInfo.id,
+                        title = movieInfo.title,
+                        overview = movieInfo.overview,
+                        poster = movieInfo.posterPath,
+                        backdrop = movieInfo.backdropPath,
+                        ratings = movieInfo.voteAverage,
+                        numberOfRatings = movieInfo.voteCount,
+                        minimumAge = if (movieInfo.adult) 16 else 13,
+                        runtime = movieInfo.runtime,
+                        genres = movieInfo.genres,
+                        actors = emptyList()
+                    )
+                )
+            } catch (e: Throwable) {
+                liveMovie.value = ErrorResult(e)
             }
-           bind(movieInfo, actors)
+            try {
+                val actorsInfo = RetrofitModule.movieApi.getActors(id, BuildConfig.API_KEY)
+                movieDataBase.getMovieDao()
+                    .insertActors(ConverterDb.convertActorListToDb(actorsInfo.cast, movieId = id))
+                liveActors.value = SuccessActorResult(actorsInfo.cast)
+            } catch (e: Throwable) {
+                liveActors.value = ErrorResult(e)
+            }
         }
-
     }
 
-    fun getLiveActorList(): LiveData<List<Actor>>{
-        return liveActorList
+    fun loadMovieFromDb(movieId: Int) {
+        viewModelScope.launch {
+            liveMovie.value =
+                SuccessDetailResult(
+                    ConverterDb.convertMovieFromDb(
+                        movieDataBase.getMovieDao().getMovieById(movieId = movieId)
+                    )
+                )
+            liveActors.value = SuccessActorResult(
+                ConverterDb.convertActorListFromDb(
+                    movieDataBase.getMovieDao().getActorsByMovieId(movieId = movieId)
+                )
+            )
+        }
     }
-
-    fun getLiveImageMovie(): LiveData<String>{
-        return liveImageMovie
-    }
-
-    fun getLiveMovieDescription(): LiveData<String>{
-        return liveMovieDescription
-    }
-
-    fun getLiveNameMovie(): LiveData<String>{
-        return liveNameMovie
-    }
-
-    fun getLiveReview(): LiveData<String>{
-        return liveReview
-    }
-
-    fun getLiveGenre(): LiveData<String>{
-        return liveGenre
-    }
-
-    fun getLiveMinimumAge(): LiveData<String>{
-        return liveMinimumAge
-    }
-
-    fun getLiveRating(): LiveData<Float>{
-        return liveRating
-    }
-
-
-
-    private fun bind(movieInfo: MovieInfo, actors: ActorsInfo){
-        liveActorList.value = actors.cast
-        liveGenre.value = movieInfo.genres.joinToString { genre -> genre.name }
-        liveImageMovie.value = movieInfo.backdropPath
-        liveMinimumAge.value = if(movieInfo.adult) "16+" else "13+"
-        liveNameMovie.value = movieInfo.title
-        liveMovieDescription.value = movieInfo.overview
-        liveRating.value = movieInfo.voteAverage
-        liveReview.value = movieInfo.voteCount.toString()
-    }
-
-
 }
