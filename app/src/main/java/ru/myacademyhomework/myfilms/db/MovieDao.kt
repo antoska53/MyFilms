@@ -15,6 +15,12 @@ interface MovieDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertActors(actors: List<ActorDb>)
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertGenres(genres: List<GenreDb>)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertMoviesAndGenres(moviesAndGenres: MoviesAndGenres)
+
     @Query("select * from movies")
     suspend fun getAllMovies(): List<MovieDb>
 
@@ -24,5 +30,7 @@ interface MovieDao {
     @Query("select * from actors where movie_id = :movieId")
     suspend fun getActorsByMovieId(movieId: Int): List<ActorDb>
 
+    @Query("select genres.id, genres.name from genres join movies_and_genres on genres.id = movies_and_genres.genre_id where movies_and_genres.movie_id = :movieId ")
+    suspend fun getGenresByMovieId(movieId: Int): List<GenreDb>
 
 }

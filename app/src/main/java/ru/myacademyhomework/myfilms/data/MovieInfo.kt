@@ -14,6 +14,7 @@ data class MovieInfo (
 
     @SerialName("backdrop_path")
     val backdropPath: String,
+    @SerialName("genres")
     val genres: List<Genre>,
     val id: Int,
 

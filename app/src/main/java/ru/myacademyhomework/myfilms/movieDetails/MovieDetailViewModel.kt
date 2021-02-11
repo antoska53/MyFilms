@@ -1,5 +1,6 @@
 package ru.myacademyhomework.myfilms.movieDetails
 
+import android.util.Log
 import androidx.lifecycle.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -11,6 +12,7 @@ import ru.myacademyhomework.myfilms.data.Movie
 import ru.myacademyhomework.myfilms.db.ConverterDb
 import ru.myacademyhomework.myfilms.db.MovieDataBase
 import ru.myacademyhomework.myfilms.movie.MovieInfo
+import ru.myacademyhomework.myfilms.movie.MovieViewHolder.Companion.TAG
 import ru.myacademyhomework.myfilms.network.*
 
 class MovieDetailViewModel : ViewModel() {
@@ -18,7 +20,7 @@ class MovieDetailViewModel : ViewModel() {
     val liveMovie = mutableLiveMovie
     private val mutableLiveActors = MutableLiveData<MovieResult>()
     val liveActors = mutableLiveActors
-    val movieDataBase = MovieDataBase.movieDataBase
+    val movieDao = MovieDataBase.movieDataBase.getMovieDao()
 
 
     fun loadMovie(id: Int) {
@@ -32,7 +34,7 @@ class MovieDetailViewModel : ViewModel() {
                         overview = movieInfo.overview,
                         poster = movieInfo.posterPath,
                         backdrop = movieInfo.backdropPath,
-                        ratings = movieInfo.voteAverage,
+                        ratings = movieInfo.voteAverage / 2,
                         numberOfRatings = movieInfo.voteCount,
                         minimumAge = if (movieInfo.adult) 16 else 13,
                         runtime = movieInfo.runtime,
@@ -45,7 +47,7 @@ class MovieDetailViewModel : ViewModel() {
             }
             try {
                 val actorsInfo = RetrofitModule.movieApi.getActors(id, BuildConfig.API_KEY)
-                movieDataBase.getMovieDao()
+                movieDao
                     .insertActors(ConverterDb.convertActorListToDb(actorsInfo.cast, movieId = id))
                 liveActors.value = SuccessActorResult(actorsInfo.cast)
             } catch (e: Throwable) {
@@ -59,12 +61,13 @@ class MovieDetailViewModel : ViewModel() {
             liveMovie.value =
                 SuccessDetailResult(
                     ConverterDb.convertMovieFromDb(
-                        movieDataBase.getMovieDao().getMovieById(movieId = movieId)
+                        movieDao.getMovieById(movieId = movieId),
+                        movieDao.getGenresByMovieId(movieId = movieId)
                     )
                 )
             liveActors.value = SuccessActorResult(
                 ConverterDb.convertActorListFromDb(
-                    movieDataBase.getMovieDao().getActorsByMovieId(movieId = movieId)
+                    movieDao.getActorsByMovieId(movieId = movieId)
                 )
             )
         }

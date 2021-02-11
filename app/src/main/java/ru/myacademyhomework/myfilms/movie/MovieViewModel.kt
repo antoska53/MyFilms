@@ -8,9 +8,11 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import ru.myacademyhomework.myfilms.BuildConfig
 import ru.myacademyhomework.myfilms.MyApplication
+import ru.myacademyhomework.myfilms.data.Genre
 import ru.myacademyhomework.myfilms.data.Movie
 import ru.myacademyhomework.myfilms.db.ConverterDb
 import ru.myacademyhomework.myfilms.db.MovieDataBase
+import ru.myacademyhomework.myfilms.db.MoviesAndGenres
 import ru.myacademyhomework.myfilms.movie.MovieViewHolder.Companion.TAG
 import ru.myacademyhomework.myfilms.network.*
 
@@ -19,14 +21,15 @@ class MovieViewModel : ViewModel() {
     private val mutableLiveData = MutableLiveData<MovieResult>()
     val liveData: LiveData<MovieResult> = mutableLiveData
     private val movieApi = RetrofitModule.movieApi
-    private val movieDataBase = MovieDataBase.movieDataBase
+    private val movieDao = MovieDataBase.movieDataBase.getMovieDao()
 
     private fun loadData() {
         viewModelScope.launch {
             mutableLiveData.value =
                 try {
                     val listMovies = loadMovies()
-                    movieDataBase.getMovieDao().insertMovies(ConverterDb.convertMovieListToDb(listMovies))
+                    val listGenre = loadGenres()
+                    writeDataToDb(listMovies, listGenre)
                     SuccessResult(listMovies)
                 } catch (e: Throwable) {
                     if (e is CancellationException) {
@@ -40,9 +43,37 @@ class MovieViewModel : ViewModel() {
 
     private fun loadDataFromDb() {
         viewModelScope.launch {
-            mutableLiveData.value =
-                SuccessResult(ConverterDb.convertMovieListFromDb(movieDataBase.getMovieDao().getAllMovies()))
+            val listMovies = movieDao.getAllMovies()
+            mutableLiveData.value = SuccessResult(
+                listMovies = listMovies.asFlow()
+                    .flatMapMerge {
+                        val genres = movieDao.getGenresByMovieId(it.id)
+                        val movie = ConverterDb.convertMovieFromDb(it, genres)
+                        flow {
+                            emit(
+                                movie
+                            )
+                        }
+                    }.toList()
+            )
         }
+    }
+
+    private suspend fun writeDataToDb(listMovies: List<Movie>, listGenres: List<Genre>) {
+        movieDao.insertMovies(ConverterDb.convertMovieListToDb(listMovies))
+        movieDao.insertGenres(ConverterDb.convertGenreListToDb(listGenres))
+        listMovies.asFlow()
+            .map {
+                for (genre in it.genres) {
+                    movieDao.insertMoviesAndGenres(
+                        MoviesAndGenres(
+                            movieId = it.id,
+                            genreId = genre.id
+                        )
+                    )
+                }
+            }.collect()
+
     }
 
     private suspend fun loadMovies(): List<Movie> {
@@ -58,7 +89,7 @@ class MovieViewModel : ViewModel() {
                             overview = movie.overview,
                             poster = movie.posterPath,
                             backdrop = movie.backdropPath,
-                            ratings = movie.voteAverage,
+                            ratings = movie.voteAverage / 2,
                             numberOfRatings = movie.voteCount,
                             minimumAge = if (movie.adult) 16 else 13,
                             runtime = movie.runtime,
@@ -70,6 +101,10 @@ class MovieViewModel : ViewModel() {
             }
             .flowOn(Dispatchers.IO)
             .toList()
+    }
+
+    private suspend fun loadGenres(): List<Genre> {
+        return movieApi.getGenres(BuildConfig.API_KEY).genres
     }
 
 

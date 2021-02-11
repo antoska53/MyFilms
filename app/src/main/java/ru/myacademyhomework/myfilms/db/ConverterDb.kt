@@ -3,6 +3,7 @@ package ru.myacademyhomework.myfilms.db
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 import ru.myacademyhomework.myfilms.data.Actor
+import ru.myacademyhomework.myfilms.data.Genre
 import ru.myacademyhomework.myfilms.data.Movie
 import ru.myacademyhomework.myfilms.movie.MovieInfo
 
@@ -55,8 +56,8 @@ object ConverterDb {
             .toList()
     }
 
-    suspend fun convertMovieFromDb(movieDb: MovieDb): Movie {
-        return  Movie(
+    suspend fun convertMovieFromDb(movieDb: MovieDb, listGenres: List<GenreDb>): Movie {
+        return Movie(
             id = movieDb.id,
             title = movieDb.title,
             overview = movieDb.overview,
@@ -66,19 +67,21 @@ object ConverterDb {
             numberOfRatings = movieDb.numberOfRatings,
             minimumAge = movieDb.minimumAge,
             runtime = movieDb.runtime,
-            genres = emptyList(),
+            genres = convertGenreListFromDb(listGenres),
             actors = emptyList()
         )
     }
 
-    suspend fun convertActorListFromDb(listActorDb: List<ActorDb>): List<Actor>{
+    suspend fun convertActorListFromDb(listActorDb: List<ActorDb>): List<Actor> {
         return listActorDb.asFlow()
             .flatMapMerge {
                 flow {
                     emit(
-                        Actor(id = it.id,
-                        name = it.name,
-                        picture = it.picture)
+                        Actor(
+                            id = it.id,
+                            name = it.name,
+                            picture = it.picture
+                        )
                     )
                 }
             }
@@ -86,17 +89,47 @@ object ConverterDb {
             .toList()
     }
 
-    suspend fun convertActorListToDb(listActor: List<Actor>, movieId: Int): List<ActorDb>{
+    suspend fun convertActorListToDb(listActor: List<Actor>, movieId: Int): List<ActorDb> {
         return listActor.asFlow()
             .flatMapMerge {
                 flow {
                     emit(
-                        ActorDb(id = it.id,
+                        ActorDb(
+                            id = it.id,
                             name = it.name,
                             picture = it.picture,
-                            movieId = movieId)
+                            movieId = movieId
+                        )
                     )
                 }
+            }
+            .flowOn(Dispatchers.IO)
+            .toList()
+    }
+
+    suspend fun convertGenreListToDb(listGenre: List<Genre>): List<GenreDb> {
+        return listGenre.asFlow()
+            .flatMapMerge {
+                flow {
+                    emit(
+                        GenreDb(
+                            id = it.id,
+                            name = it.name
+                        )
+                    )
+                }
+            }
+            .flowOn(Dispatchers.IO)
+            .toList()
+    }
+
+    suspend fun convertGenreListFromDb(listGenre: List<GenreDb>): List<Genre> {
+        return listGenre.asFlow()
+            .map {
+                Genre(
+                    id = it.id,
+                    name = it.name
+                )
             }
             .flowOn(Dispatchers.IO)
             .toList()

@@ -2,13 +2,7 @@ package ru.myacademyhomework.myfilms.db
 
 import androidx.room.*
 
-@Entity(tableName = "genres",
-foreignKeys = [ForeignKey(
-    entity = MovieDb::class,
-    parentColumns = arrayOf("id"),
-    childColumns = arrayOf("movie_id"),
-    onDelete = ForeignKey.CASCADE
-)])
+@Entity(tableName = "genres")
 data class GenreDb(
     @PrimaryKey
     @ColumnInfo(name = "id")
@@ -16,8 +10,4 @@ data class GenreDb(
 
     @ColumnInfo(name = "name")
     val name: String,
-
-    @ColumnInfo(name = "movie_id")
-    val movieId: Int
-
 )
