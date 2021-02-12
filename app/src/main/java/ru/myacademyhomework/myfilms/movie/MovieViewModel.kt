@@ -46,7 +46,7 @@ class MovieViewModel : ViewModel() {
             val listMovies = movieDao.getAllMovies()
             mutableLiveData.value = SuccessResult(
                 listMovies = listMovies.asFlow()
-                    .flatMapMerge {
+                    .flatMapConcat {
                         val genres = movieDao.getGenresByMovieId(it.id)
                         val movie = ConverterDb.convertMovieFromDb(it, genres)
                         flow {
@@ -62,24 +62,37 @@ class MovieViewModel : ViewModel() {
     private suspend fun writeDataToDb(listMovies: List<Movie>, listGenres: List<Genre>) {
         movieDao.insertMovies(ConverterDb.convertMovieListToDb(listMovies))
         movieDao.insertGenres(ConverterDb.convertGenreListToDb(listGenres))
-        listMovies.asFlow()
-            .map {
-                for (genre in it.genres) {
-                    movieDao.insertMoviesAndGenres(
-                        MoviesAndGenres(
-                            movieId = it.id,
-                            genreId = genre.id
-                        )
-                    )
-                }
-            }.collect()
+        movieDao.insertMoviesAndGenres(
+            listMovies.asFlow()
+                .flatMapConcat {
+//                for (genre in it.genres) {
+//                    movieDao.insertMoviesAndGenres(
+//                        MoviesAndGenres(
+//                            movieId = it.id,
+//                            genreId = genre.id
+//                        )
+//                    )
+//                }
+                    flow {
+                        for (genre in it.genres) {
+                            emit(
+                                MoviesAndGenres(
+                                    movieId = it.id,
+                                    genreId = genre.id
+                                )
+                            )
+                        }
+                    }
+                }.toList()
+        )
+
 
     }
 
     private suspend fun loadMovies(): List<Movie> {
         return flowOf(movieApi.getMoviesId(BuildConfig.API_KEY))
             .flatMapLatest { it.movies.asFlow() }
-            .flatMapMerge { it ->
+            .flatMapConcat { it ->
                 flow {
                     val movie = movieApi.getMovieInfo(it.movieId, BuildConfig.API_KEY)
                     emit(

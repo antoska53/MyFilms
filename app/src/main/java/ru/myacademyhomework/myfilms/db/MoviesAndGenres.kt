@@ -6,6 +6,7 @@ import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
 
 @Entity(tableName = "movies_and_genres",
+    primaryKeys = ["movie_id", "genre_id"],
     foreignKeys = [
         ForeignKey(
             entity = MovieDb::class,
@@ -19,10 +20,6 @@ import androidx.room.PrimaryKey
         )
     ])
 data class MoviesAndGenres(
-    @PrimaryKey(autoGenerate = true)
-    @ColumnInfo(name = "id")
-    val id: Int = 0,
-
     @ColumnInfo(name = "movie_id")
     val movieId: Int,
 

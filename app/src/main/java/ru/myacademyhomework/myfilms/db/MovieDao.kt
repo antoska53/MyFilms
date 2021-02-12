@@ -18,8 +18,11 @@ interface MovieDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertGenres(genres: List<GenreDb>)
 
+//    @Insert(onConflict = OnConflictStrategy.REPLACE)
+//    suspend fun insertMoviesAndGenres(moviesAndGenres: MoviesAndGenres)
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertMoviesAndGenres(moviesAndGenres: MoviesAndGenres)
+    suspend fun insertMoviesAndGenres(listMoviesAndGenres: List<MoviesAndGenres>)
 
     @Query("select * from movies")
     suspend fun getAllMovies(): List<MovieDb>

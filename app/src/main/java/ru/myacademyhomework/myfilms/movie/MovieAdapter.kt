@@ -8,7 +8,7 @@ import ru.myacademyhomework.myfilms.data.Movie
 
 class MovieAdapter(private val listener: FragmentMoviesList.Companion.Listener?): RecyclerView.Adapter<MovieViewHolder>() {
 
-    private var listMovies: List<Movie> = emptyList()
+    val listMovies: MutableList<Movie> = mutableListOf()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MovieViewHolder {
         var view = LayoutInflater.from(parent.context).inflate(R.layout.view_holder_movie, parent,false)
@@ -24,8 +24,8 @@ class MovieAdapter(private val listener: FragmentMoviesList.Companion.Listener?)
     }
 
     fun updateData(list: List<Movie>){
-        listMovies = list
-        notifyDataSetChanged()
+        listMovies.clear()
+        listMovies.addAll(list)
     }
 
 }

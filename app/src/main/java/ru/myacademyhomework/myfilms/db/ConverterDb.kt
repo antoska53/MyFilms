@@ -10,7 +10,7 @@ import ru.myacademyhomework.myfilms.movie.MovieInfo
 object ConverterDb {
     suspend fun convertMovieListToDb(listMovie: List<Movie>): List<MovieDb> {
         return listMovie.asFlow()
-            .flatMapMerge {
+            .flatMapConcat {
                 flow {
                     emit(
                         MovieDb(
@@ -33,7 +33,7 @@ object ConverterDb {
 
     suspend fun convertMovieListFromDb(listMovieDb: List<MovieDb>): List<Movie> {
         return listMovieDb.asFlow()
-            .flatMapMerge {
+            .flatMapConcat {
                 flow {
                     emit(
                         Movie(
@@ -74,7 +74,7 @@ object ConverterDb {
 
     suspend fun convertActorListFromDb(listActorDb: List<ActorDb>): List<Actor> {
         return listActorDb.asFlow()
-            .flatMapMerge {
+            .flatMapConcat {
                 flow {
                     emit(
                         Actor(
@@ -91,7 +91,7 @@ object ConverterDb {
 
     suspend fun convertActorListToDb(listActor: List<Actor>, movieId: Int): List<ActorDb> {
         return listActor.asFlow()
-            .flatMapMerge {
+            .flatMapConcat {
                 flow {
                     emit(
                         ActorDb(
@@ -109,7 +109,7 @@ object ConverterDb {
 
     suspend fun convertGenreListToDb(listGenre: List<Genre>): List<GenreDb> {
         return listGenre.asFlow()
-            .flatMapMerge {
+            .flatMapConcat {
                 flow {
                     emit(
                         GenreDb(

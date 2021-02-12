@@ -12,8 +12,10 @@ import android.widget.Toast
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import ru.myacademyhomework.myfilms.MovieDiffUtil
 import ru.myacademyhomework.myfilms.R
 import ru.myacademyhomework.myfilms.data.Movie
 import ru.myacademyhomework.myfilms.movie.MovieViewHolder.Companion.TAG
@@ -79,14 +81,21 @@ class FragmentMoviesList : Fragment() {
                 GridLayoutManager(view.context, 2)
             else GridLayoutManager(view.context, 4)
         adapter = MovieAdapter(listener)
-        recycler?.adapter = adapter//MovieAdapter(listener) //, liveData?.value)
+        recycler?.adapter = adapter
         val dividerItemDecoration: MovieItemDecoration = MovieItemDecoration(20)
         recycler?.addItemDecoration(dividerItemDecoration)
     }
 
     private fun updateRecycler(result: MovieResult) {
         when(result){
-            is SuccessResult -> adapter?.updateData(result.listMovies)
+            is SuccessResult -> {
+                adapter?.let {
+                    val movieDiffUtil = MovieDiffUtil(it.listMovies, result.listMovies)
+                    val diffResult: DiffUtil.DiffResult = DiffUtil.calculateDiff(movieDiffUtil)
+                    it.updateData(result.listMovies)
+                    diffResult.dispatchUpdatesTo(it)
+                }
+            }
             is ErrorResult -> {
                 adapter?.updateData(emptyList())
                 Toast.makeText(context, "Ошибка при загузке, попробуйте снова", Toast.LENGTH_LONG)
