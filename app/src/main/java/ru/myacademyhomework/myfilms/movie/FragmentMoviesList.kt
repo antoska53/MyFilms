@@ -8,6 +8,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
@@ -15,8 +16,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import ru.myacademyhomework.myfilms.MovieDiffUtil
-import ru.myacademyhomework.myfilms.R
+import ru.myacademyhomework.myfilms.*
 import ru.myacademyhomework.myfilms.data.Movie
 import ru.myacademyhomework.myfilms.movie.MovieViewHolder.Companion.TAG
 import ru.myacademyhomework.myfilms.network.*
@@ -39,6 +39,7 @@ class FragmentMoviesList : Fragment() {
     private var adapter: MovieAdapter? = null
     private var viewModel: MovieViewModel? = null
     private var recycler: RecyclerView? = null
+    private var progressBar: ProgressBar? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -68,9 +69,13 @@ class FragmentMoviesList : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initRecycler(view)
+        progressBar = view.findViewById(R.id.progress_load)
 
         viewModel?.liveData?.observe(this.viewLifecycleOwner, Observer<MovieResult> {
             updateRecycler(it)
+        })
+        viewModel?.loadState?.observe(this.viewLifecycleOwner, {
+            progressLoading(it)
         })
     }
 
@@ -105,6 +110,19 @@ class FragmentMoviesList : Fragment() {
             is TerminalError -> {
                 adapter?.updateData(emptyList())
                 Toast.makeText(context, "Неизвестная ошибка", Toast.LENGTH_LONG).show()
+            }
+        }
+    }
+
+    private fun progressLoading(loadState: LoadState){
+        when(loadState){
+            is Loading -> {
+                recycler?.visibility = View.GONE
+                progressBar?.visibility = View.VISIBLE
+            }
+            is Ready -> {
+                recycler?.visibility = View.VISIBLE
+                progressBar?.visibility = View.GONE
             }
         }
     }

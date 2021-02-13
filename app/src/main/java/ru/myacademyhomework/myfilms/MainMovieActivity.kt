@@ -1,9 +1,13 @@
 package ru.myacademyhomework.myfilms
 
+import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
+import androidx.transition.Explode
+import androidx.transition.Fade
+import androidx.transition.Slide
 import ru.myacademyhomework.myfilms.movie.FragmentMoviesList
 
 class MainMovieActivity : AppCompatActivity(), FragmentMoviesList.Companion.Listener {
@@ -17,9 +21,13 @@ class MainMovieActivity : AppCompatActivity(), FragmentMoviesList.Companion.List
     }
 
     fun changeFragment (fragment : Fragment){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            fragment.enterTransition = Explode()
+            fragment.exitTransition = Explode()
+        }
         supportFragmentManager.beginTransaction()
             .replace(R.id.fragment_container, fragment)
-            .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
+            //.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
             .addToBackStack(null)
             .commit()
     }

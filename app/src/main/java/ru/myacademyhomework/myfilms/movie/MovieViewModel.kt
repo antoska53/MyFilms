@@ -6,8 +6,7 @@ import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
-import ru.myacademyhomework.myfilms.BuildConfig
-import ru.myacademyhomework.myfilms.MyApplication
+import ru.myacademyhomework.myfilms.*
 import ru.myacademyhomework.myfilms.data.Genre
 import ru.myacademyhomework.myfilms.data.Movie
 import ru.myacademyhomework.myfilms.db.ConverterDb
@@ -20,6 +19,8 @@ import ru.myacademyhomework.myfilms.network.*
 class MovieViewModel : ViewModel() {
     private val mutableLiveData = MutableLiveData<MovieResult>()
     val liveData: LiveData<MovieResult> = mutableLiveData
+    private val _loadState = MutableLiveData<LoadState>()
+    val loadState: LiveData<LoadState> = _loadState
     private val movieApi = RetrofitModule.movieApi
     private val movieDao = MovieDataBase.movieDataBase.getMovieDao()
 
@@ -43,6 +44,7 @@ class MovieViewModel : ViewModel() {
 
     private fun loadDataFromDb() {
         viewModelScope.launch {
+            _loadState.value = Loading()
             val listMovies = movieDao.getAllMovies()
             mutableLiveData.value = SuccessResult(
                 listMovies = listMovies.asFlow()
@@ -54,7 +56,8 @@ class MovieViewModel : ViewModel() {
                                 movie
                             )
                         }
-                    }.toList()
+                    }.onEach { _loadState.value = Ready() }
+                    .toList()
             )
         }
     }
@@ -65,14 +68,6 @@ class MovieViewModel : ViewModel() {
         movieDao.insertMoviesAndGenres(
             listMovies.asFlow()
                 .flatMapConcat {
-//                for (genre in it.genres) {
-//                    movieDao.insertMoviesAndGenres(
-//                        MoviesAndGenres(
-//                            movieId = it.id,
-//                            genreId = genre.id
-//                        )
-//                    )
-//                }
                     flow {
                         for (genre in it.genres) {
                             emit(
@@ -83,10 +78,9 @@ class MovieViewModel : ViewModel() {
                             )
                         }
                     }
-                }.toList()
+                }.onEach { _loadState.value = Ready() }
+                .toList()
         )
-
-
     }
 
     private suspend fun loadMovies(): List<Movie> {
@@ -121,15 +115,12 @@ class MovieViewModel : ViewModel() {
     }
 
 
-    fun getData(): LiveData<MovieResult> {
+    fun getData() {
         loadData()
-        Log.d(TAG, "loadData: " + mutableLiveData.value)
-        return liveData
     }
 
-    fun getDataFromDb(): LiveData<MovieResult> {
+    fun getDataFromDb() {
         loadDataFromDb()
-        return liveData
     }
 
 }

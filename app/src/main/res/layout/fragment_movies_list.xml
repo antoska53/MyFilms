@@ -2,20 +2,14 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#191926"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
 
     <ImageView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:scaleType="centerCrop"
-        android:src="@drawable/back"
-        />
-
-    <ImageView
         android:id="@+id/path"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_width="16dp"
+        android:layout_height="16dp"
         android:src="@drawable/target"
         android:layout_marginStart="18dp"
         android:layout_marginTop="30dp"
@@ -32,6 +26,16 @@
         app:layout_constraintStart_toEndOf="@id/path"
         app:layout_constraintTop_toTopOf="@id/path"
         app:layout_constraintBottom_toBottomOf="@id/path"/>
+
+    <ProgressBar
+        android:id="@+id/progress_load"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:visibility="gone"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_movie"

@@ -3,19 +3,14 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="#191926">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context=".MainMovieActivity">
 
-        <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:scaleType="centerCrop"
-            android:src="@drawable/back"
-            />
 
         <ImageView
             android:id="@+id/main_image"
@@ -31,8 +26,8 @@
             android:id="@+id/mask"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:src="@drawable/mask"
-            android:scaleType="centerCrop"
+            android:src="@drawable/mask_vector"
+            android:scaleType="fitXY"
             app:layout_constraintEnd_toEndOf="@id/main_image"
             app:layout_constraintStart_toStartOf="@id/main_image"
             app:layout_constraintTop_toTopOf="@id/main_image"
@@ -60,8 +55,8 @@
 
         <ImageView
             android:id="@+id/rectangle"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
             android:src="@drawable/rectangle"
             android:layout_marginStart="16dp"
             app:layout_constraintStart_toStartOf="parent"
@@ -71,6 +66,7 @@
             android:id="@+id/tv_minimum_age"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:gravity="center"
             android:text="@string/rectangle_text"
             android:textAppearance="@style/rectangle_text"
             app:layout_constraintStart_toStartOf="@id/rectangle"
