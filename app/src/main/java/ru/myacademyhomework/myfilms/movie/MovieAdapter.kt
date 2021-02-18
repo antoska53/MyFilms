@@ -26,6 +26,9 @@ class MovieAdapter(private val listener: FragmentMoviesList.Companion.Listener?)
     fun updateData(list: List<Movie>){
         listMovies.clear()
         listMovies.addAll(list)
+        //val oldSize = listMovies.size
+        //notifyItemRangeChanged(0, list.size)
+        notifyDataSetChanged()
     }
 
 }

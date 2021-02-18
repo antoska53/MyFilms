@@ -95,10 +95,13 @@ class FragmentMoviesList : Fragment() {
         when(result){
             is SuccessResult -> {
                 adapter?.let {
-                    val movieDiffUtil = MovieDiffUtil(it.listMovies, result.listMovies)
-                    val diffResult: DiffUtil.DiffResult = DiffUtil.calculateDiff(movieDiffUtil)
+//                    val movieListUpdateCallback = MovieListUpdateCallback(it)
+//                    val movieDiffUtil = MovieDiffUtil(it.listMovies, result.listMovies)
+//                    val diffResult: DiffUtil.DiffResult = DiffUtil.calculateDiff(movieDiffUtil)
                     it.updateData(result.listMovies)
-                    diffResult.dispatchUpdatesTo(it)
+                  //  diffResult.dispatchUpdatesTo(movieListUpdateCallback)
+                    //Log.d(TAG, "updateRecycler: FIRST INSERT = ${movieListUpdateCallback.firstInsert}")
+                    //recycler?.smoothScrollToPosition(movieListUpdateCallback.firstInsert);
                 }
             }
             is ErrorResult -> {
