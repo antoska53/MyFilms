@@ -2,7 +2,9 @@ package ru.myacademyhomework.myfilms.db
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
+import androidx.room.Ignore
 import androidx.room.PrimaryKey
+import ru.myacademyhomework.myfilms.data.Genre
 
 @Entity(tableName = "movies")
 data class MovieDb(
@@ -34,10 +36,4 @@ data class MovieDb(
     @ColumnInfo(name = "runtime")
     val runtime: Int,
 
-
-//    @Ignore
-//    val genres: List<Genre>,
-//
-//    @Ignore
-//    val actors: List<Actor>
 )

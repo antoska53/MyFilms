@@ -9,17 +9,25 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ProgressBar
+import android.widget.TextView
 import android.widget.Toast
+import androidx.core.util.TimeUtils
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.work.WorkInfo
+import androidx.work.WorkManager
 import ru.myacademyhomework.myfilms.*
 import ru.myacademyhomework.myfilms.data.Movie
 import ru.myacademyhomework.myfilms.movie.MovieViewHolder.Companion.TAG
 import ru.myacademyhomework.myfilms.network.*
+import ru.myacademyhomework.myfilms.service.DataBaseUpdateService
+import java.text.SimpleDateFormat
+import java.util.*
+import java.util.concurrent.TimeUnit
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -40,6 +48,7 @@ class FragmentMoviesList : Fragment() {
     private var viewModel: MovieViewModel? = null
     private var recycler: RecyclerView? = null
     private var progressBar: ProgressBar? = null
+    private var textViewMovieList: TextView? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -51,10 +60,6 @@ class FragmentMoviesList : Fragment() {
 
         viewModel = ViewModelProvider(this).get(MovieViewModel::class.java)
 
-        if (savedInstanceState == null) {
-            viewModel?.getDataFromDb()
-            viewModel?.getData()
-        }
 
     }
 
@@ -70,12 +75,31 @@ class FragmentMoviesList : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         initRecycler(view)
         progressBar = view.findViewById(R.id.progress_load)
+        textViewMovieList = view.findViewById(R.id.tv_movie_list)
 
-        viewModel?.liveData?.observe(this.viewLifecycleOwner, Observer<MovieResult> {
-            updateRecycler(it)
-        })
+//        viewModel?.liveData?.observe(this.viewLifecycleOwner, Observer<MovieResult> {
+//            updateRecycler(it)
+//        })
         viewModel?.loadState?.observe(this.viewLifecycleOwner, {
             progressLoading(it)
+        })
+
+        viewModel?.allMovies?.observe(this.viewLifecycleOwner, {
+            Log.d(TAG, "onViewCreated: ALL MOVIES - $it")
+            Toast.makeText(context, "Список фильмов обновлён", Toast.LENGTH_SHORT).show()
+            updateRecycler(SuccessResult(it))
+        })
+
+        viewModel?.statusLoad?.observe(this.viewLifecycleOwner, {
+            when (it.state) {
+                    WorkInfo.State.FAILED -> {
+                       // updateRecycler(ErrorResult(it.outputData.keyValueMap[DataBaseUpdateService.UPDATE_ERROR].toString()))
+                        progressLoading(Ready())
+                    }
+                    WorkInfo.State.SUCCEEDED -> {
+                        progressLoading(Ready())
+                    }
+                }
         })
     }
 
@@ -92,15 +116,17 @@ class FragmentMoviesList : Fragment() {
     }
 
     private fun updateRecycler(result: MovieResult) {
-        when(result){
+        when (result) {
             is SuccessResult -> {
                 adapter?.let {
 //                    val movieListUpdateCallback = MovieListUpdateCallback(it)
 //                    val movieDiffUtil = MovieDiffUtil(it.listMovies, result.listMovies)
 //                    val diffResult: DiffUtil.DiffResult = DiffUtil.calculateDiff(movieDiffUtil)
+                    val simpleDateFormat = SimpleDateFormat("yyyy.MM.dd G 'at' HH:mm:ss z")
+                    val currentDateAndTime: String = simpleDateFormat.format(Date())
+                    textViewMovieList?.text = "Обновлено в $currentDateAndTime"
                     it.updateData(result.listMovies)
-                  //  diffResult.dispatchUpdatesTo(movieListUpdateCallback)
-                    //Log.d(TAG, "updateRecycler: FIRST INSERT = ${movieListUpdateCallback.firstInsert}")
+                    //  diffResult.dispatchUpdatesTo(movieListUpdateCallback)
                     //recycler?.smoothScrollToPosition(movieListUpdateCallback.firstInsert);
                 }
             }
@@ -108,7 +134,6 @@ class FragmentMoviesList : Fragment() {
                 adapter?.updateData(emptyList())
                 Toast.makeText(context, "Ошибка при загузке, попробуйте снова", Toast.LENGTH_LONG)
                     .show()
-                Log.d(TAG, "updateRecycler: ${result.e}")
             }
             is TerminalError -> {
                 adapter?.updateData(emptyList())
@@ -117,8 +142,8 @@ class FragmentMoviesList : Fragment() {
         }
     }
 
-    private fun progressLoading(loadState: LoadState){
-        when(loadState){
+    private fun progressLoading(loadState: LoadState) {
+        when (loadState) {
             is Loading -> {
                 recycler?.visibility = View.GONE
                 progressBar?.visibility = View.VISIBLE

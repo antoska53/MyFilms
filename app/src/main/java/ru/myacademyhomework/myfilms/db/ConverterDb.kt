@@ -31,6 +31,23 @@ object ConverterDb {
             .toList()
     }
 
+    suspend fun converterMovieListToMovieAndGenreList(listMovies: List<Movie>): List<MoviesAndGenres> {
+        return listMovies.asFlow()
+            .flatMapConcat {
+                flow {
+                    for (genre in it.genres) {
+                        emit(
+                            MoviesAndGenres(
+                                movieId = it.id,
+                                genreId = genre.id
+                            )
+                        )
+                    }
+                }
+            }
+            .toList()
+    }
+
     suspend fun convertMovieListFromDb(listMovieDb: List<MovieDb>): List<Movie> {
         return listMovieDb.asFlow()
             .flatMapConcat {
@@ -133,5 +150,28 @@ object ConverterDb {
             }
             .flowOn(Dispatchers.IO)
             .toList()
+
     }
+
+    suspend fun convertMovieWithActorsFromDb(
+        movieDb: MovieDb,
+        genres: List<GenreDb>,
+        actors: List<ActorDb>
+    ): Movie {
+        return Movie(
+            id = movieDb.id,
+            title = movieDb.title,
+            overview = movieDb.overview,
+            poster = movieDb.poster,
+            backdrop = movieDb.backdrop,
+            ratings = movieDb.ratings,
+            numberOfRatings = movieDb.numberOfRatings,
+            minimumAge = movieDb.minimumAge,
+            runtime = movieDb.runtime,
+            genres = convertGenreListFromDb(genres),
+            actors = convertActorListFromDb(actors)
+        )
+    }
+
+
 }

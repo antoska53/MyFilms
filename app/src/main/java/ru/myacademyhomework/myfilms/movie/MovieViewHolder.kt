@@ -15,15 +15,15 @@ import ru.myacademyhomework.myfilms.data.Movie
 class MovieViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     private val imageMovie: ImageView = itemView.findViewById(R.id.iv_avengers_movie)
     private val tvNameMovie: TextView = itemView.findViewById(R.id.tv_name)
-    private val tvReview :TextView = itemView.findViewById(R.id.review)
-    private val tvGenre :TextView = itemView.findViewById(R.id.movieGenre)
-    private val tvRuntime :TextView = itemView.findViewById(R.id.tv_runtime)
-    private val tvMinimumAge :TextView = itemView.findViewById(R.id.tv_minimum_age)
-    private val ratingBar :RatingBar = itemView.findViewById(R.id.rating_bar)
+    private val tvReview: TextView = itemView.findViewById(R.id.review)
+    private val tvGenre: TextView = itemView.findViewById(R.id.movieGenre)
+    private val tvRuntime: TextView = itemView.findViewById(R.id.tv_runtime)
+    private val tvMinimumAge: TextView = itemView.findViewById(R.id.tv_minimum_age)
+    private val ratingBar: RatingBar = itemView.findViewById(R.id.rating_bar)
 
 
-    companion object{
-        val TAG :String = "TAG"
+    companion object {
+        val TAG: String = "TAG"
     }
 
     fun onBind(movie: Movie, listener: FragmentMoviesList.Companion.Listener?) {
@@ -38,7 +38,6 @@ class MovieViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
         tvNameMovie.text = movie.title
         tvGenre.text = movie.genres.joinToString { genre -> genre.name }
-
         tvMinimumAge.text = movie.minimumAge.toString() + "+"
         tvReview.text = movie.numberOfRatings.toString() + " REVIEWS"
         tvRuntime.text = movie.runtime.toString() + " MIN"

@@ -1,6 +1,7 @@
 package ru.myacademyhomework.myfilms.movieDetails
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -20,6 +21,7 @@ import ru.myacademyhomework.myfilms.R
 import ru.myacademyhomework.myfilms.data.Actor
 import ru.myacademyhomework.myfilms.data.Movie
 import ru.myacademyhomework.myfilms.movie.MovieAdapter
+import ru.myacademyhomework.myfilms.movie.MovieViewHolder.Companion.TAG
 import ru.myacademyhomework.myfilms.network.ErrorResult
 import ru.myacademyhomework.myfilms.network.MovieResult
 import ru.myacademyhomework.myfilms.network.SuccessActorResult
@@ -55,11 +57,12 @@ class FragmentMoviesDetails : Fragment() {
             movieId = it.getInt(MOVIE_ID)
             param2 = it.getString(ARG_PARAM2)
         }
-        viewModel = ViewModelProvider(this).get(MovieDetailViewModel::class.java)
-        if(savedInstanceState == null) {
-            viewModel?.loadMovieFromDb(movieId)
-            viewModel?.loadMovie(movieId)
-        }
+        viewModel = ViewModelProvider(this, MovieDetailViewModel.Factory(movieId))
+            .get(MovieDetailViewModel::class.java)
+//        if(savedInstanceState == null) {
+//            viewModel?.loadMovieFromDb(movieId)
+//            viewModel?.loadMovie(movieId)
+//        }
 
     }
 
@@ -84,20 +87,26 @@ class FragmentMoviesDetails : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         initRecycler(view)
 
-        viewModel?.liveActors?.observe(this.viewLifecycleOwner, Observer<MovieResult> {
-           when(it){
-               is SuccessActorResult -> updateRecycler(it.actors)
-               is ErrorResult -> Toast.makeText(context, "Ошибка при загузке, попробуйте снова", Toast.LENGTH_LONG)
-                   .show()
-           }
+//        viewModel?.liveActors?.observe(this.viewLifecycleOwner, Observer<MovieResult> {
+//           when(it){
+//               is SuccessActorResult -> updateRecycler(it.actors)
+//               is ErrorResult -> Toast.makeText(context, "Ошибка при загузке, попробуйте снова", Toast.LENGTH_LONG)
+//                   .show()
+//           }
+//
+//        })
+//        viewModel?.liveMovie?.observe(this.viewLifecycleOwner, {
+//            when(it){
+//                is SuccessDetailResult -> updateData(it.movieInfo)
+//                is ErrorResult -> Toast.makeText(context, "Ошибка при загузке, попробуйте снова", Toast.LENGTH_LONG)
+//                    .show()
+//            }
+//        })
 
-        })
-        viewModel?.liveMovie?.observe(this.viewLifecycleOwner, {
-            when(it){
-                is SuccessDetailResult -> updateData(it.movieInfo)
-                is ErrorResult -> Toast.makeText(context, "Ошибка при загузке, попробуйте снова", Toast.LENGTH_LONG)
-                    .show()
-            }
+        viewModel?.movieDetailLiveData?.observe(this.viewLifecycleOwner, {
+            updateData(it)
+            updateRecycler(it.actors)
+            Log.d("ACTORS", "onViewCreated: ${it.actors}")
         })
         }
 

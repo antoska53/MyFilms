@@ -1,5 +1,6 @@
 package ru.myacademyhomework.myfilms.movieDetails
 
+import android.app.Application
 import android.util.Log
 import androidx.lifecycle.*
 import kotlinx.coroutines.Dispatchers
@@ -14,62 +15,33 @@ import ru.myacademyhomework.myfilms.db.MovieDataBase
 import ru.myacademyhomework.myfilms.movie.MovieInfo
 import ru.myacademyhomework.myfilms.movie.MovieViewHolder.Companion.TAG
 import ru.myacademyhomework.myfilms.network.*
+import ru.myacademyhomework.myfilms.repository.MovieDetailRepository
 
-class MovieDetailViewModel : ViewModel() {
+class MovieDetailViewModel(private val movieId: Int) : ViewModel() {
     private val mutableLiveMovie = MutableLiveData<MovieResult>()
     val liveMovie = mutableLiveMovie
     private val mutableLiveActors = MutableLiveData<MovieResult>()
     val liveActors = mutableLiveActors
-    val movieDao = MovieDataBase.movieDataBase.getMovieDao()
+    private val movieDetailRepository = MovieDetailRepository(movieId)
+    val movieDetailLiveData: LiveData<Movie> = movieDetailRepository.movieFlow.asLiveData()
 
+    init {
+        refreshDataFromRepository()
+    }
 
-    fun loadMovie(id: Int) {
+    private fun refreshDataFromRepository() {
         viewModelScope.launch {
-            try {
-                val movieInfo = RetrofitModule.movieApi.getMovieInfo(id, BuildConfig.API_KEY)
-                liveMovie.value = SuccessDetailResult(
-                    Movie(
-                        id = movieInfo.id,
-                        title = movieInfo.title,
-                        overview = movieInfo.overview,
-                        poster = movieInfo.posterPath,
-                        backdrop = movieInfo.backdropPath,
-                        ratings = movieInfo.voteAverage / 2,
-                        numberOfRatings = movieInfo.voteCount,
-                        minimumAge = if (movieInfo.adult) 16 else 13,
-                        runtime = movieInfo.runtime,
-                        genres = movieInfo.genres,
-                        actors = emptyList()
-                    )
-                )
-            } catch (e: Throwable) {
-                liveMovie.value = ErrorResult(e)
-            }
-            try {
-                val actorsInfo = RetrofitModule.movieApi.getActors(id, BuildConfig.API_KEY)
-                movieDao
-                    .insertActors(ConverterDb.convertActorListToDb(actorsInfo.cast, movieId = id))
-                liveActors.value = SuccessActorResult(actorsInfo.cast)
-            } catch (e: Throwable) {
-                liveActors.value = ErrorResult(e)
-            }
+            movieDetailRepository.refreshMovieDetails()
         }
     }
 
-    fun loadMovieFromDb(movieId: Int) {
-        viewModelScope.launch {
-            liveMovie.value =
-                SuccessDetailResult(
-                    ConverterDb.convertMovieFromDb(
-                        movieDao.getMovieById(movieId = movieId),
-                        movieDao.getGenresByMovieId(movieId = movieId)
-                    )
-                )
-            liveActors.value = SuccessActorResult(
-                ConverterDb.convertActorListFromDb(
-                    movieDao.getActorsByMovieId(movieId = movieId)
-                )
-            )
+    class Factory(val movieId: Int) : ViewModelProvider.Factory {
+        override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+            if (modelClass.isAssignableFrom(MovieDetailViewModel::class.java)) {
+                @Suppress("UNCHECKED_CAST")
+                return MovieDetailViewModel(movieId) as T
+            }
+            throw IllegalArgumentException("Unable to construct viewmodel")
         }
     }
 }
