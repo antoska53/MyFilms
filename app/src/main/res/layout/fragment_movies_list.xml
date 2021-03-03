@@ -21,7 +21,7 @@
         android:layout_height="wrap_content"
         android:text="@string/movies_list"
         android:textSize="14sp"
-        android:textColor="#FFFFFF"
+        android:textColor="@color/white"
         android:layout_marginStart="8dp"
         app:layout_constraintStart_toEndOf="@id/path"
         app:layout_constraintTop_toTopOf="@id/path"

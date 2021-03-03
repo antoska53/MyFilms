@@ -11,5 +11,6 @@
     <color name="shadow_text">#80000000</color>
     <color name="pink_text">#FF3466</color>
     <color name="grey_text">#6D6D80</color>
+    <color name="grey_cardview">#565665</color>
     <color name="color_app">#191926</color>
 </resources>
