@@ -9,51 +9,37 @@ import ru.myacademyhomework.myfilms.movie.MovieInfo
 
 object ConverterDb {
     suspend fun convertMovieListToDb(listMovie: List<Movie>): List<MovieDb> {
-        return listMovie.asFlow()
-            .flatMapConcat {
-                flow {
-                    emit(
-                        MovieDb(
-                            id = it.id,
-                            title = it.title,
-                            overview = it.overview,
-                            poster = it.poster,
-                            backdrop = it.backdrop,
-                            ratings = it.ratings,
-                            numberOfRatings = it.numberOfRatings,
-                            minimumAge = it.minimumAge,
-                            runtime = it.runtime
-                        )
-                    )
-                }
-            }
-            .flowOn(Dispatchers.IO)
-            .toList()
+        return listMovie.map {
+            MovieDb(
+                id = it.id,
+                title = it.title,
+                overview = it.overview,
+                poster = it.poster,
+                backdrop = it.backdrop,
+                ratings = it.ratings,
+                numberOfRatings = it.numberOfRatings,
+                minimumAge = it.minimumAge,
+                runtime = it.runtime
+            )
+        }
     }
 
     suspend fun convertMovieListFromDb(listMovieDb: List<MovieDb>): List<Movie> {
-        return listMovieDb.asFlow()
-            .flatMapConcat {
-                flow {
-                    emit(
-                        Movie(
-                            id = it.id,
-                            title = it.title,
-                            overview = it.overview,
-                            poster = it.poster,
-                            backdrop = it.backdrop,
-                            ratings = it.ratings,
-                            numberOfRatings = it.numberOfRatings,
-                            minimumAge = it.minimumAge,
-                            runtime = it.runtime,
-                            genres = emptyList(),
-                            actors = emptyList()
-                        )
-                    )
-                }
-            }
-            .flowOn(Dispatchers.IO)
-            .toList()
+        return listMovieDb.map {
+            Movie(
+                id = it.id,
+                title = it.title,
+                overview = it.overview,
+                poster = it.poster,
+                backdrop = it.backdrop,
+                ratings = it.ratings,
+                numberOfRatings = it.numberOfRatings,
+                minimumAge = it.minimumAge,
+                runtime = it.runtime,
+                genres = emptyList(),
+                actors = emptyList()
+            )
+        }
     }
 
     suspend fun convertMovieFromDb(movieDb: MovieDb, listGenres: List<GenreDb>): Movie {
@@ -73,65 +59,41 @@ object ConverterDb {
     }
 
     suspend fun convertActorListFromDb(listActorDb: List<ActorDb>): List<Actor> {
-        return listActorDb.asFlow()
-            .flatMapConcat {
-                flow {
-                    emit(
-                        Actor(
-                            id = it.id,
-                            name = it.name,
-                            picture = it.picture
-                        )
-                    )
-                }
-            }
-            .flowOn(Dispatchers.IO)
-            .toList()
+        return listActorDb.map {
+            Actor(
+                id = it.id,
+                name = it.name,
+                picture = it.picture
+            )
+        }
     }
 
     suspend fun convertActorListToDb(listActor: List<Actor>, movieId: Int): List<ActorDb> {
-        return listActor.asFlow()
-            .flatMapConcat {
-                flow {
-                    emit(
-                        ActorDb(
-                            id = it.id,
-                            name = it.name,
-                            picture = it.picture,
-                            movieId = movieId
-                        )
-                    )
-                }
-            }
-            .flowOn(Dispatchers.IO)
-            .toList()
+        return listActor.map {
+            ActorDb(
+                id = it.id,
+                name = it.name,
+                picture = it.picture,
+                movieId = movieId
+            )
+        }
     }
 
     suspend fun convertGenreListToDb(listGenre: List<Genre>): List<GenreDb> {
-        return listGenre.asFlow()
-            .flatMapConcat {
-                flow {
-                    emit(
-                        GenreDb(
-                            id = it.id,
-                            name = it.name
-                        )
-                    )
-                }
-            }
-            .flowOn(Dispatchers.IO)
-            .toList()
+        return listGenre.map {
+            GenreDb(
+                id = it.id,
+                name = it.name
+            )
+        }
     }
 
     suspend fun convertGenreListFromDb(listGenre: List<GenreDb>): List<Genre> {
-        return listGenre.asFlow()
-            .map {
-                Genre(
-                    id = it.id,
-                    name = it.name
-                )
-            }
-            .flowOn(Dispatchers.IO)
-            .toList()
+        return listGenre.map {
+            Genre(
+                id = it.id,
+                name = it.name
+            )
+        }
     }
 }

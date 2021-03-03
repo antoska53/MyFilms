@@ -5,7 +5,7 @@ import android.view.View
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 
-class MovieItemDecoration: RecyclerView.ItemDecoration {
+class MovieItemDecoration : RecyclerView.ItemDecoration {
     private var offset: Int = 0
 
     constructor(offset: Int) : super() {
@@ -19,12 +19,13 @@ class MovieItemDecoration: RecyclerView.ItemDecoration {
         state: RecyclerView.State
     ) {
         super.getItemOffsets(outRect, view, parent, state)
-        var layoutParams :GridLayoutManager.LayoutParams = view.layoutParams as GridLayoutManager.LayoutParams
-        if(layoutParams.spanIndex % 2 == 0){
+        var layoutParams: GridLayoutManager.LayoutParams =
+            view.layoutParams as GridLayoutManager.LayoutParams
+        if (layoutParams.spanIndex % 2 == 0) {
             outRect.top = offset
             outRect.left = offset
             outRect.right = offset / 2
-        }else{
+        } else {
             outRect.top = offset
             outRect.left = offset / 2
             outRect.right = offset

@@ -10,36 +10,15 @@ import androidx.transition.Fade
 import androidx.transition.Slide
 import ru.myacademyhomework.myfilms.movie.FragmentMoviesList
 
-class MainMovieActivity : AppCompatActivity(), FragmentMoviesList.Companion.Listener {
+class MainMovieActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        if (savedInstanceState == null){
-            changeFragmentNull(FragmentMoviesList.newInstance("",""))
+        if (savedInstanceState == null) {
+            supportFragmentManager.beginTransaction()
+                .replace(R.id.fragment_container, FragmentMoviesList.newInstance("", ""))
+                .commit()
         }
     }
-
-    fun changeFragment (fragment : Fragment){
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            fragment.enterTransition = Explode()
-            fragment.exitTransition = Explode()
-        }
-        supportFragmentManager.beginTransaction()
-            .replace(R.id.fragment_container, fragment)
-            //.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
-            .addToBackStack(null)
-            .commit()
-    }
-    fun changeFragmentNull (fragment : Fragment){
-        supportFragmentManager.beginTransaction()
-            .replace(R.id.fragment_container, fragment)
-            .commit()
-    }
-
-    override fun itemClicked(fragment: Fragment) {
-        changeFragment(fragment)
-    }
-
-
 }

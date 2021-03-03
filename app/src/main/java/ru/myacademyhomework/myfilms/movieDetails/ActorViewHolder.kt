@@ -17,10 +17,10 @@ class ActorViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
     fun onBind(actor: Actor) {
         Glide.with(itemView)
-            .load(BuildConfig.BASE_IMAGE_URL +  actor.picture)
+            .load(BuildConfig.BASE_IMAGE_URL + actor.picture)
             .placeholder(R.drawable.ic_launcher_foreground)
             .into(ivActor)
 
-        tvActorName.setText(actor.name)
+        tvActorName.text = actor.name
     }
 }

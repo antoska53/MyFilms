@@ -4,17 +4,17 @@ import android.app.Application
 import androidx.room.Room
 import ru.myacademyhomework.myfilms.db.MovieDataBase
 
-class MyApplication : Application()   {
+class MyApplication : Application() {
 
     init {
         instance = this
     }
 
     companion object {
-        private var instance: MyApplication? = null
+        private lateinit var instance: MyApplication
 
-        fun getInstance() : MyApplication {
-            return instance!!
+        fun getInstance(): MyApplication {
+            return instance
         }
     }
 }

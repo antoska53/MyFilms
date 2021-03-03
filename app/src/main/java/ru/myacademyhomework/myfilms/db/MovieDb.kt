@@ -33,11 +33,4 @@ data class MovieDb(
 
     @ColumnInfo(name = "runtime")
     val runtime: Int,
-
-
-//    @Ignore
-//    val genres: List<Genre>,
-//
-//    @Ignore
-//    val actors: List<Actor>
 )

@@ -9,6 +9,8 @@ import android.widget.ImageView
 import android.widget.RatingBar
 import android.widget.TextView
 import android.widget.Toast
+import androidx.core.os.bundleOf
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -35,40 +37,31 @@ private const val ARG_PARAM2 = "param2"
  * Use the [FragmentMoviesDetails.newInstance] factory method to
  * create an instance of this fragment.
  */
-class FragmentMoviesDetails : Fragment() {
+class FragmentMoviesDetails : Fragment(R.layout.fragment_movie_details) {
     // TODO: Rename and change types of parameters
-    private var movieId: Int = -1
-    private var param2: String? = null
+    private val movieId: Int by lazy {
+        arguments?.getInt(MOVIE_ID, -1)!!
+    }
     private var ivImageMovie: ImageView? = null
     private var tvMovieDescription: TextView? = null
     private var tvNameMovie: TextView? = null
-    private var tvReview :TextView? = null
-    private var tvGenre :TextView? = null
-    private var tvMinimumAge :TextView? = null
-    private var ratingBar :RatingBar? = null
+    private var tvReview: TextView? = null
+    private var tvGenre: TextView? = null
+    private var tvMinimumAge: TextView? = null
+    private var ratingBar: RatingBar? = null
     private var adapter: ActorAdapter? = null
-    private var viewModel: MovieDetailViewModel? = null
+    private val viewModel: MovieDetailViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        arguments?.let {
-            movieId = it.getInt(MOVIE_ID)
-            param2 = it.getString(ARG_PARAM2)
+        if (savedInstanceState == null) {
+            viewModel.loadMovieFromDb(movieId)
+            viewModel.loadMovie(movieId)
         }
-        viewModel = ViewModelProvider(this).get(MovieDetailViewModel::class.java)
-        if(savedInstanceState == null) {
-            viewModel?.loadMovieFromDb(movieId)
-            viewModel?.loadMovie(movieId)
-        }
-
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
-        val view: View = inflater.inflate(R.layout.fragment_movie_details, container, false)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         ivImageMovie = view.findViewById(R.id.main_image)
         tvMovieDescription = view.findViewById(R.id.description)
         tvNameMovie = view.findViewById(R.id.movieName)
@@ -77,44 +70,47 @@ class FragmentMoviesDetails : Fragment() {
         tvMinimumAge = view.findViewById(R.id.tv_minimum_age)
         ratingBar = view.findViewById(R.id.rating_bar)
 
-        return view
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
         initRecycler(view)
 
-        viewModel?.liveActors?.observe(this.viewLifecycleOwner, Observer<MovieResult> {
-           when(it){
-               is SuccessActorResult -> updateRecycler(it.actors)
-               is ErrorResult -> Toast.makeText(context, "Ошибка при загузке, попробуйте снова", Toast.LENGTH_LONG)
-                   .show()
-           }
+        viewModel.liveActors.observe(this.viewLifecycleOwner, Observer<MovieResult> {
+            when (it) {
+                is SuccessActorResult -> updateRecycler(it.actors)
+                is ErrorResult -> Toast.makeText(
+                    context,
+                    getString(R.string.internet_error),
+                    Toast.LENGTH_LONG
+                )
+                    .show()
+            }
 
         })
-        viewModel?.liveMovie?.observe(this.viewLifecycleOwner, {
-            when(it){
+        viewModel.liveMovie.observe(this.viewLifecycleOwner, {
+            when (it) {
                 is SuccessDetailResult -> updateData(it.movieInfo)
-                is ErrorResult -> Toast.makeText(context, "Ошибка при загузке, попробуйте снова", Toast.LENGTH_LONG)
+                is ErrorResult -> Toast.makeText(
+                    context,
+                    getString(R.string.internet_error),
+                    Toast.LENGTH_LONG
+                )
                     .show()
             }
         })
-        }
+    }
 
 
-    private fun initRecycler(view: View){
-        var recycler: RecyclerView = view.findViewById(R.id.recycler_actor)
+    private fun initRecycler(view: View) {
+        val recycler: RecyclerView = view.findViewById(R.id.recycler_actor)
         recycler.layoutManager = LinearLayoutManager(context, RecyclerView.HORIZONTAL, false)
         adapter = ActorAdapter()
         recycler.adapter = adapter
     }
 
-    private fun updateRecycler(listActors: List<Actor>){
+    private fun updateRecycler(listActors: List<Actor>) {
         adapter?.updateData(listActors)
     }
 
-    private fun updateData(movie: Movie){
-        Glide.with(context!!)
+    private fun updateData(movie: Movie) {
+        Glide.with(requireContext())
             .load(BuildConfig.BASE_IMAGE_URL + movie.backdrop)
             .into(ivImageMovie!!)
         tvMovieDescription?.text = movie.overview
@@ -139,11 +135,9 @@ class FragmentMoviesDetails : Fragment() {
         fun newInstance(movieId: Int, param2: String) =
             FragmentMoviesDetails()
                 .apply {
-                arguments = Bundle().apply {
-                    putInt(MOVIE_ID, movieId)
-
-                    putString(ARG_PARAM2, param2)
+                    arguments = bundleOf(
+                        MOVIE_ID to movieId
+                    )
                 }
-            }
     }
 }
