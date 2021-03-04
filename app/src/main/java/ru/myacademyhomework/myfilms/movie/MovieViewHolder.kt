@@ -8,6 +8,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import ru.myacademyhomework.myfilms.BuildConfig
+import ru.myacademyhomework.myfilms.MovieListListener
 import ru.myacademyhomework.myfilms.movieDetails.FragmentMoviesDetails
 import ru.myacademyhomework.myfilms.R
 import ru.myacademyhomework.myfilms.data.Movie
@@ -26,9 +27,9 @@ class MovieViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val TAG: String = "TAG"
     }
 
-    fun onBind(movie: Movie, listener: FragmentMoviesList.Companion.Listener?) {
+    fun onBind(movie: Movie, listener: MovieListListener) {
         itemView.setOnClickListener(View.OnClickListener {
-            listener?.itemClicked(FragmentMoviesDetails.newInstance(movie.id, ""))
+            listener.itemClicked(FragmentMoviesDetails.newInstance(movie.id, ""))
         })
 
         Glide.with(itemView)

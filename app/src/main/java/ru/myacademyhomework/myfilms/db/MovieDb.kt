@@ -35,5 +35,4 @@ data class MovieDb(
 
     @ColumnInfo(name = "runtime")
     val runtime: Int,
-
 )

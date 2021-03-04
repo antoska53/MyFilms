@@ -2,6 +2,7 @@ package ru.myacademyhomework.myfilms.movie
 
 import android.content.Context
 import android.content.res.Configuration
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -11,15 +12,15 @@ import android.view.ViewGroup
 import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
-import androidx.core.util.TimeUtils
+import androidx.fragment.app.FragmentTransaction
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import androidx.work.WorkInfo
-import androidx.work.WorkManager
+import androidx.transition.Explode
 import ru.myacademyhomework.myfilms.*
 import ru.myacademyhomework.myfilms.data.Movie
 import ru.myacademyhomework.myfilms.movie.MovieViewHolder.Companion.TAG
@@ -39,37 +40,28 @@ private const val ARG_PARAM2 = "param2"
  * Use the [FragmentMoviesList.newInstance] factory method to
  * create an instance of this fragment.
  */
-class FragmentMoviesList : Fragment() {
+class FragmentMoviesList : Fragment(R.layout.fragment_movies_list), MovieListListener {
     // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
-    private var listener: Listener? = null
     private var adapter: MovieAdapter? = null
-    private var viewModel: MovieViewModel? = null
     private var recycler: RecyclerView? = null
     private var progressBar: ProgressBar? = null
+    private val viewModel: MovieViewModel by viewModels()
+    private val offset = 20
+    private val spanCountVertical = 2
+    private val spanCountHorizontal = 4
     private var textViewMovieList: TextView? = null
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
+        if (savedInstanceState == null) {
+            viewModel.getDataFromDb()
+            viewModel.getData()
         }
 
-        viewModel = ViewModelProvider(this).get(MovieViewModel::class.java)
-
-
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_movies_list, container, false)
-    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -107,11 +99,11 @@ class FragmentMoviesList : Fragment() {
         recycler = view.findViewById(R.id.recycler_movie)
         recycler?.layoutManager =
             if (resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT)
-                GridLayoutManager(view.context, 2)
-            else GridLayoutManager(view.context, 4)
-        adapter = MovieAdapter(listener)
+                GridLayoutManager(view.context, spanCountVertical)
+            else GridLayoutManager(view.context, spanCountHorizontal)
+        adapter = MovieAdapter(this)
         recycler?.adapter = adapter
-        val dividerItemDecoration: MovieItemDecoration = MovieItemDecoration(20)
+        val dividerItemDecoration: MovieItemDecoration = MovieItemDecoration(offset)
         recycler?.addItemDecoration(dividerItemDecoration)
     }
 
@@ -132,12 +124,13 @@ class FragmentMoviesList : Fragment() {
             }
             is ErrorResult -> {
                 adapter?.updateData(emptyList())
-                Toast.makeText(context, "Ошибка при загузке, попробуйте снова", Toast.LENGTH_LONG)
+                Toast.makeText(context, getString(R.string.internet_error), Toast.LENGTH_LONG)
                     .show()
             }
             is TerminalError -> {
                 adapter?.updateData(emptyList())
-                Toast.makeText(context, "Неизвестная ошибка", Toast.LENGTH_LONG).show()
+                Toast.makeText(context, getString(R.string.terminal_error), Toast.LENGTH_LONG)
+                    .show()
             }
         }
     }
@@ -155,15 +148,22 @@ class FragmentMoviesList : Fragment() {
         }
     }
 
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        listener = context as Listener
+    override fun itemClicked(fragment: Fragment) {
+        changeFragment(fragment)
     }
 
-    override fun onDetach() {
-        super.onDetach()
-        listener = null
+    private fun changeFragment(fragment: Fragment) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            fragment.enterTransition = Explode()
+            fragment.exitTransition = Explode()
+        }
+        parentFragmentManager.beginTransaction()
+            .replace(R.id.fragment_container, fragment)
+            //.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
+            .addToBackStack(null)
+            .commit()
     }
+
 
     override fun onDestroyView() {
         super.onDestroyView()
@@ -171,8 +171,8 @@ class FragmentMoviesList : Fragment() {
         adapter = null
     }
 
-
     companion object {
+
         /**
          * Use this factory method to create a new instance of
          * this fragment using the provided parameters.
@@ -184,15 +184,6 @@ class FragmentMoviesList : Fragment() {
         // TODO: Rename and change types and number of parameters
         @JvmStatic
         fun newInstance(param1: String, param2: String) =
-            FragmentMoviesList().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
-            }
-
-        interface Listener {
-            fun itemClicked(fragment: Fragment)
-        }
+            FragmentMoviesList()
     }
 }
