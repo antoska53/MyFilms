@@ -52,14 +52,14 @@ class FragmentMoviesDetails : Fragment(R.layout.fragment_movie_details) {
     private var tvMinimumAge: TextView? = null
     private var ratingBar: RatingBar? = null
     private var adapter: ActorAdapter? = null
-    private val viewModel: MovieDetailViewModel by viewModels()
+    private val viewModel: MovieDetailViewModel by viewModels {MovieDetailViewModel.Factory(movieId)}
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        if (savedInstanceState == null) {
-            viewModel.loadMovieFromDb(movieId)
-            viewModel.loadMovie(movieId)
-        }
+//        if (savedInstanceState == null) {
+//            viewModel.loadMovieFromDb(movieId)
+//            viewModel.loadMovie(movieId)
+//        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -90,7 +90,7 @@ class FragmentMoviesDetails : Fragment(R.layout.fragment_movie_details) {
 //            }
 //        })
 
-        viewModel?.movieDetailLiveData?.observe(this.viewLifecycleOwner, {
+        viewModel.movieDetailLiveData.observe(this.viewLifecycleOwner, {
             updateData(it)
             updateRecycler(it.actors)
             Log.d("ACTORS", "onViewCreated: ${it.actors}")

@@ -10,7 +10,7 @@ import ru.myacademyhomework.myfilms.data.Movie
 class MovieAdapter(private val listener: MovieListListener) :
     RecyclerView.Adapter<MovieViewHolder>() {
 
-    val listMovies: MutableList<Movie> = mutableListOf()
+    private val listMovies: MutableList<Movie> = mutableListOf()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MovieViewHolder {
         return MovieViewHolder(

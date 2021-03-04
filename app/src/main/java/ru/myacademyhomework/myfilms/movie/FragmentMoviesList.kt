@@ -21,6 +21,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.transition.Explode
+import androidx.work.WorkInfo
 import ru.myacademyhomework.myfilms.*
 import ru.myacademyhomework.myfilms.data.Movie
 import ru.myacademyhomework.myfilms.movie.MovieViewHolder.Companion.TAG
@@ -55,10 +56,10 @@ class FragmentMoviesList : Fragment(R.layout.fragment_movies_list), MovieListLis
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        if (savedInstanceState == null) {
-            viewModel.getDataFromDb()
-            viewModel.getData()
-        }
+//        if (savedInstanceState == null) {
+//            viewModel.getDataFromDb()
+//            viewModel.getData()
+//        }
 
     }
 
