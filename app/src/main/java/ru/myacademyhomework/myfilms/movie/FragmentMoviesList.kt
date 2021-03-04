@@ -53,46 +53,36 @@ class FragmentMoviesList : Fragment(R.layout.fragment_movies_list), MovieListLis
     private var textViewMovieList: TextView? = null
 
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-//        if (savedInstanceState == null) {
-//            viewModel.getDataFromDb()
-//            viewModel.getData()
-//        }
-
-    }
-
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initRecycler(view)
         progressBar = view.findViewById(R.id.progress_load)
         textViewMovieList = view.findViewById(R.id.tv_movie_list)
 
-//        viewModel?.liveData?.observe(this.viewLifecycleOwner, Observer<MovieResult> {
-//            updateRecycler(it)
-//        })
-        viewModel?.loadState?.observe(this.viewLifecycleOwner, {
+        viewModel.loadState.observe(this.viewLifecycleOwner, {
             progressLoading(it)
         })
 
-        viewModel?.allMovies?.observe(this.viewLifecycleOwner, {
-            Log.d(TAG, "onViewCreated: ALL MOVIES - $it")
-            Toast.makeText(context, "Список фильмов обновлён", Toast.LENGTH_SHORT).show()
-            updateRecycler(SuccessResult(it))
+        viewModel.allMovies.observe(this.viewLifecycleOwner, { listMovie ->
+            Log.d(TAG, "onViewCreated: ALL MOVIES - $listMovie")
+            if (listMovie.isEmpty()) {
+                progressLoading(Loading())
+            } else {
+                updateRecycler(SuccessResult(listMovie))
+            }
         })
 
-        viewModel?.statusLoad?.observe(this.viewLifecycleOwner, {
+        viewModel.statusLoad.observe(this.viewLifecycleOwner, {
             when (it.state) {
-                    WorkInfo.State.FAILED -> {
-                       // updateRecycler(ErrorResult(it.outputData.keyValueMap[DataBaseUpdateService.UPDATE_ERROR].toString()))
-                        progressLoading(Ready())
-                    }
-                    WorkInfo.State.SUCCEEDED -> {
-                        progressLoading(Ready())
-                    }
+                WorkInfo.State.FAILED -> {
+                    // updateRecycler(ErrorResult(it.outputData.keyValueMap[DataBaseUpdateService.UPDATE_ERROR].toString()))
+                    progressLoading(Ready())
                 }
+                WorkInfo.State.SUCCEEDED -> {
+                    Toast.makeText(context, "Список фильмов обновлён", Toast.LENGTH_SHORT).show()
+                    progressLoading(Ready())
+                }
+            }
         })
     }
 

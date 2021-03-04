@@ -13,9 +13,10 @@ class WorkMovieHelper {
 
     private val constraints = Constraints.Builder()
         .setRequiredNetworkType(NetworkType.UNMETERED)
-        //.setRequiresCharging(true)
+        .setRequiresCharging(true)
         .build()
-    val periodicRequest: PeriodicWorkRequest = PeriodicWorkRequest.Builder(
+
+    private val periodicRequest: PeriodicWorkRequest = PeriodicWorkRequest.Builder(
         DataBaseUpdateService::class.java,
         8, TimeUnit.HOURS,
         1, TimeUnit.HOURS

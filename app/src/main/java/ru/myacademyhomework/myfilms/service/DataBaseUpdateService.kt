@@ -20,12 +20,12 @@ class DataBaseUpdateService(context: Context, workerParams: WorkerParameters) :
             movieRepository.writeDataToDb(listMovies, listGenre)
             Log.d(TAG, "doWork: RESULT SUCCESS $listMovies")
             Result.success()
-        }catch (e: Throwable){
+        } catch (e: Throwable) {
             Result.failure(workDataOf(UPDATE_ERROR to e.message))
         }
     }
 
-    companion object{
+    companion object {
         const val UPDATE_ERROR: String = "update_error"
     }
 }

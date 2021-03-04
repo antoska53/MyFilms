@@ -5,7 +5,7 @@ import kotlinx.serialization.*
 import ru.myacademyhomework.myfilms.data.Genre
 
 @Serializable
-data class MovieInfo (
+data class MovieInfo(
     val adult: Boolean,
 
     @SerialName("backdrop_path")
@@ -62,7 +62,7 @@ data class MovieInfo (
 
 
 @Serializable
-data class ProductionCompany (
+data class ProductionCompany(
     val id: Long,
 
     val name: String,
@@ -72,7 +72,7 @@ data class ProductionCompany (
 )
 
 @Serializable
-data class ProductionCountry (
+data class ProductionCountry(
     @SerialName("iso_3166_1")
     val iso3166_1: String,
 
@@ -80,7 +80,7 @@ data class ProductionCountry (
 )
 
 @Serializable
-data class SpokenLanguage (
+data class SpokenLanguage(
     @SerialName("iso_639_1")
     val iso639_1: String,
 

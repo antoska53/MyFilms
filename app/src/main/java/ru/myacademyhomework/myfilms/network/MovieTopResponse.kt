@@ -9,9 +9,6 @@ class MovieTopResponse(
     @SerialName("page")
     val page: Long,
 
-//    @SerialName("results")
-//    val movies: List<MovieNetworkModel>,
-
     @SerialName("results")
     val movies: List<MovieNetworkModel>,
     )

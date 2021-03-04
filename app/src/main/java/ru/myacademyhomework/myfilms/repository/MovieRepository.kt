@@ -10,7 +10,6 @@ import ru.myacademyhomework.myfilms.db.MovieDataBase
 import ru.myacademyhomework.myfilms.network.RetrofitModule
 
 class MovieRepository() {
-  //  val workRepository = WorkMovieRepository()
     private val movieDao: MovieDao = MovieDataBase.movieDataBase.getMovieDao()
     private val movieApi = RetrofitModule.movieApi
 
@@ -21,84 +20,24 @@ class MovieRepository() {
         }
     }
 
-//    suspend fun refreshMovies() {
-//        withContext(Dispatchers.IO) {
-//            WorkManager.getInstance(MyApplication.getInstance()).enqueue(workRepository.simpleRequest)
-//        }
-//    }
-//
-//    suspend fun periodicUpdateMovies(){
-//        withContext(Dispatchers.IO){
-//            WorkManager.getInstance(MyApplication.getInstance()).enqueue(workRepository.periodicRequest)
-//        }
-//    }
-
-//    suspend fun loadMovies(): List<Movie> {
-//        return flowOf(movieApi.getMoviesId(BuildConfig.API_KEY))
-//            .flatMapLatest { it.movies.asFlow() }
-//            .flatMapConcat { it ->
-//                flow {
-//                    val movie = movieApi.getMovieInfo(it.movieId, BuildConfig.API_KEY)
-//                    emit(
-//                        Movie(
-//                            id = movie.id,
-//                            title = movie.title,
-//                            overview = movie.overview,
-//                            poster = movie.posterPath,
-//                            backdrop = movie.backdropPath,
-//                            ratings = movie.voteAverage / 2,
-//                            numberOfRatings = movie.voteCount,
-//                            minimumAge = if (movie.adult) 16 else 13,
-//                            runtime = movie.runtime,
-//                            genres = movie.genres,
-//                            actors = emptyList()
-//                        )
-//                    )
-//                }
-//            }
-//            .toList()
-//    }
 
     suspend fun loadMovies(): List<Movie> {
         return movieApi.getMoviesId(BuildConfig.API_KEY).movies.map {
             val movie = movieApi.getMovieInfo(it.movieId, BuildConfig.API_KEY)
-                Movie(
-                    id = movie.id,
-                    title = movie.title,
-                    overview = movie.overview,
-                    poster = movie.posterPath,
-                    backdrop = movie.backdropPath,
-                    ratings = movie.voteAverage / 2,
-                    numberOfRatings = movie.voteCount,
-                    minimumAge = if (movie.adult) 16 else 13,
-                    runtime = movie.runtime,
-                    genres = movie.genres,
-                    actors = emptyList()
-                )
+            Movie(
+                id = movie.id,
+                title = movie.title,
+                overview = movie.overview,
+                poster = movie.posterPath,
+                backdrop = movie.backdropPath,
+                ratings = movie.voteAverage / 2,
+                numberOfRatings = movie.voteCount,
+                minimumAge = if (movie.adult) 16 else 13,
+                runtime = movie.runtime,
+                genres = movie.genres,
+                actors = emptyList()
+            )
         }
-
-//            .flatMapLatest { it.movies.asFlow() }
-//            .flatMapConcat { it ->
-//                flow {
-//                    val movie = movieApi.getMovieInfo(it.movieId, BuildConfig.API_KEY)
-//                    emit(
-//                        Movie(
-//                            id = movie.id,
-//                            title = movie.title,
-//                            overview = movie.overview,
-//                            poster = movie.posterPath,
-//                            backdrop = movie.backdropPath,
-//                            ratings = movie.voteAverage / 2,
-//                            numberOfRatings = movie.voteCount,
-//                            minimumAge = if (movie.adult) 16 else 13,
-//                            runtime = movie.runtime,
-//                            genres = movie.genres,
-//                            actors = emptyList()
-//                        )
-//                    )
-//                }
-//            }
-//            .toList()
     }
 
     suspend fun loadGenres(): List<Genre> {

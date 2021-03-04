@@ -133,6 +133,4 @@ object ConverterDb {
             actors = convertActorListFromDb(actors)
         )
     }
-
-
 }

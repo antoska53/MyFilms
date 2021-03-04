@@ -3,7 +3,7 @@ package ru.myacademyhomework.myfilms
 import androidx.recyclerview.widget.DiffUtil
 import ru.myacademyhomework.myfilms.data.Movie
 
-class MovieDiffUtil(val oldList: List<Movie>, val newList: List<Movie>) : DiffUtil.Callback() {
+class MovieDiffUtil(private val oldList: List<Movie>, private val newList: List<Movie>) : DiffUtil.Callback() {
 
     override fun getOldListSize() = oldList.size
 

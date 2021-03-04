@@ -52,15 +52,8 @@ class FragmentMoviesDetails : Fragment(R.layout.fragment_movie_details) {
     private var tvMinimumAge: TextView? = null
     private var ratingBar: RatingBar? = null
     private var adapter: ActorAdapter? = null
-    private val viewModel: MovieDetailViewModel by viewModels {MovieDetailViewModel.Factory(movieId)}
+    private val viewModel: MovieDetailViewModel by viewModels { MovieDetailViewModel.Factory(movieId) }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-//        if (savedInstanceState == null) {
-//            viewModel.loadMovieFromDb(movieId)
-//            viewModel.loadMovie(movieId)
-//        }
-    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -74,28 +67,12 @@ class FragmentMoviesDetails : Fragment(R.layout.fragment_movie_details) {
 
         initRecycler(view)
 
-//        viewModel?.liveActors?.observe(this.viewLifecycleOwner, Observer<MovieResult> {
-//           when(it){
-//               is SuccessActorResult -> updateRecycler(it.actors)
-//               is ErrorResult -> Toast.makeText(context, "Ошибка при загузке, попробуйте снова", Toast.LENGTH_LONG)
-//                   .show()
-//           }
-//
-//        })
-//        viewModel?.liveMovie?.observe(this.viewLifecycleOwner, {
-//            when(it){
-//                is SuccessDetailResult -> updateData(it.movieInfo)
-//                is ErrorResult -> Toast.makeText(context, "Ошибка при загузке, попробуйте снова", Toast.LENGTH_LONG)
-//                    .show()
-//            }
-//        })
-
         viewModel.movieDetailLiveData.observe(this.viewLifecycleOwner, {
             updateData(it)
             updateRecycler(it.actors)
             Log.d("ACTORS", "onViewCreated: ${it.actors}")
         })
-        }
+    }
 
 
     private fun initRecycler(view: View) {

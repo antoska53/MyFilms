@@ -15,11 +15,11 @@ import ru.myacademyhomework.myfilms.network.RetrofitModule
 import ru.myacademyhomework.myfilms.service.WorkMovieDetailHelper
 
 class MovieDetailRepository(private val movieId: Int) {
-    val workRepository = WorkMovieDetailHelper(movieId)
+    private val workRepository = WorkMovieDetailHelper(movieId)
     private val movieDao: MovieDao = MovieDataBase.movieDataBase.getMovieDao()
     private val movieApi = RetrofitModule.movieApi
 
-    val movieFlow: Flow<Movie> = movieDao.getActorsByMovieId(movieId = movieId).map{
+    val movieFlow: Flow<Movie> = movieDao.getActorsByMovieId(movieId = movieId).map {
         val genres = movieDao.getGenresByMovieId(movieId)
         val movie = movieDao.getMovieById(movieId)
         ConverterDb.convertMovieWithActorsFromDb(movie, genres, it)
@@ -27,7 +27,8 @@ class MovieDetailRepository(private val movieId: Int) {
 
     suspend fun refreshMovieDetails() {
         withContext(Dispatchers.IO) {
-            WorkManager.getInstance(MyApplication.getInstance()).enqueue(workRepository.simpleDetailRequest)
+            WorkManager.getInstance(MyApplication.getInstance())
+                .enqueue(workRepository.simpleDetailRequest)
         }
     }
 
@@ -35,12 +36,12 @@ class MovieDetailRepository(private val movieId: Int) {
         return movieApi.getActors(movieId, BuildConfig.API_KEY).cast
     }
 
-    suspend fun writeActorsToDb(listActors: List<Actor>){
+    suspend fun writeActorsToDb(listActors: List<Actor>) {
         movieDao.insertActors(ConverterDb.convertActorListToDb(listActors, movieId = movieId))
     }
 
 
-    companion object{
+    companion object {
         const val MOVIE_ID = "MOVIE_ID"
     }
 }

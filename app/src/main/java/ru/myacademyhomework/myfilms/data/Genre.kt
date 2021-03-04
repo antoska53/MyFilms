@@ -10,4 +10,4 @@ data class Genre(
 
     @SerialName("name")
     val name: String
-    )
+)
