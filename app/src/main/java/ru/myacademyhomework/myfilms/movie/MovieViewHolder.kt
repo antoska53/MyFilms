@@ -29,7 +29,7 @@ class MovieViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
     fun onBind(movie: Movie, listener: MovieListListener) {
         itemView.setOnClickListener(View.OnClickListener {
-            listener.itemClicked(FragmentMoviesDetails.newInstance(movie.id, ""))
+            listener.itemClicked(movie.id)
         })
 
         Glide.with(itemView)
@@ -38,7 +38,8 @@ class MovieViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
             .into(imageMovie)
 
         tvNameMovie.text = movie.title
-        tvGenre.text = movie.genres.joinToString { genre -> genre.name }
+//        tvGenre.text = movie.genres.joinToString { genre -> genre.name }
+        tvGenre.text = movie.genresString
         tvMinimumAge.text = movie.minimumAge.toString() + "+"
         tvReview.text = movie.numberOfRatings.toString() + " REVIEWS"
         tvRuntime.text = movie.runtime.toString() + " MIN"

@@ -34,7 +34,8 @@ class MovieRepository() {
                 numberOfRatings = movie.voteCount,
                 minimumAge = if (movie.adult) 16 else 13,
                 runtime = movie.runtime,
-                genres = movie.genres,
+                listGenres = movie.genres,
+                genresString = movie.genres.joinToString { genre -> genre.name },
                 actors = emptyList()
             )
         }

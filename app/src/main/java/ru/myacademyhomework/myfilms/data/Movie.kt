@@ -20,7 +20,9 @@ data class Movie(
 
     val runtime: Int,
 
-    val genres: List<Genre>,
+    val listGenres: List<Genre>,
+
+    val genresString: String,
 
     val actors: List<Actor>
 )

@@ -28,7 +28,7 @@ object ConverterDb {
         return listMovies.asFlow()
             .flatMapConcat {
                 flow {
-                    for (genre in it.genres) {
+                    for (genre in it.listGenres) {
                         emit(
                             MoviesAndGenres(
                                 movieId = it.id,
@@ -53,7 +53,8 @@ object ConverterDb {
                 numberOfRatings = it.numberOfRatings,
                 minimumAge = it.minimumAge,
                 runtime = it.runtime,
-                genres = emptyList(),
+                listGenres = emptyList(),
+                genresString = "",
                 actors = emptyList()
             )
         }
@@ -70,7 +71,8 @@ object ConverterDb {
             numberOfRatings = movieDb.numberOfRatings,
             minimumAge = movieDb.minimumAge,
             runtime = movieDb.runtime,
-            genres = convertGenreListFromDb(listGenres),
+            listGenres = convertGenreListFromDb(listGenres),
+            genresString = listGenres.joinToString { genre -> genre.name },
             actors = emptyList()
         )
     }
@@ -129,7 +131,8 @@ object ConverterDb {
             numberOfRatings = movieDb.numberOfRatings,
             minimumAge = movieDb.minimumAge,
             runtime = movieDb.runtime,
-            genres = convertGenreListFromDb(genres),
+            listGenres = convertGenreListFromDb(genres),
+            genresString = genres.joinToString { genre -> genre.name },
             actors = convertActorListFromDb(actors)
         )
     }

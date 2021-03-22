@@ -25,6 +25,7 @@ import androidx.work.WorkInfo
 import ru.myacademyhomework.myfilms.*
 import ru.myacademyhomework.myfilms.data.Movie
 import ru.myacademyhomework.myfilms.movie.MovieViewHolder.Companion.TAG
+import ru.myacademyhomework.myfilms.movieDetails.FragmentMoviesDetails
 import ru.myacademyhomework.myfilms.network.*
 import ru.myacademyhomework.myfilms.service.DataBaseUpdateService
 import java.text.SimpleDateFormat
@@ -139,8 +140,8 @@ class FragmentMoviesList : Fragment(R.layout.fragment_movies_list), MovieListLis
         }
     }
 
-    override fun itemClicked(fragment: Fragment) {
-        changeFragment(fragment)
+    override fun itemClicked(id: Int) {
+        changeFragment(FragmentMoviesDetails.newInstance(id, ""))
     }
 
     private fun changeFragment(fragment: Fragment) {
