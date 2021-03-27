@@ -1,41 +1,32 @@
 package ru.myacademyhomework.myfilms.movie
 
-import android.content.Context
 import android.content.res.Configuration
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
-import androidx.fragment.app.FragmentTransaction
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DiffUtil
-import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.transition.Explode
 import androidx.work.WorkInfo
+import com.bumptech.glide.Glide
+import com.bumptech.glide.ListPreloader
+import com.bumptech.glide.ListPreloader.PreloadSizeProvider
+import com.bumptech.glide.integration.recyclerview.RecyclerViewPreloader
+import com.bumptech.glide.util.FixedPreloadSizeProvider
+import com.bumptech.glide.util.ViewPreloadSizeProvider
 import ru.myacademyhomework.myfilms.*
 import ru.myacademyhomework.myfilms.data.Movie
-import ru.myacademyhomework.myfilms.movie.MovieViewHolder.Companion.TAG
 import ru.myacademyhomework.myfilms.movieDetails.FragmentMoviesDetails
 import ru.myacademyhomework.myfilms.network.*
-import ru.myacademyhomework.myfilms.service.DataBaseUpdateService
 import java.text.SimpleDateFormat
 import java.util.*
-import java.util.concurrent.TimeUnit
+import androidx.recyclerview.widget.GridLayoutManager as GridLayoutManager
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
 
 /**
  * A simple [Fragment] subclass.
@@ -51,6 +42,8 @@ class FragmentMoviesList : Fragment(R.layout.fragment_movies_list), MovieListLis
     private val offset = 20
     private val spanCountVertical = 2
     private val spanCountHorizontal = 4
+    private val imageWidthPixels = 342;
+    private val imageHeightPixels = 513;
     private var textViewMovieList: TextView? = null
 
 
@@ -65,7 +58,6 @@ class FragmentMoviesList : Fragment(R.layout.fragment_movies_list), MovieListLis
         })
 
         viewModel.allMovies.observe(this.viewLifecycleOwner, { listMovie ->
-            Log.d(TAG, "onViewCreated: ALL MOVIES - $listMovie")
             if (listMovie.isEmpty()) {
                 progressLoading(Loading())
             } else {
@@ -89,14 +81,29 @@ class FragmentMoviesList : Fragment(R.layout.fragment_movies_list), MovieListLis
 
     private fun initRecycler(view: View) {
         recycler = view.findViewById(R.id.recycler_movie)
+//        recycler?.setItemViewCacheSize(8)
+        recycler?.setHasFixedSize(true)
         recycler?.layoutManager =
-            if (resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT)
-                GridLayoutManager(view.context, spanCountVertical)
-            else GridLayoutManager(view.context, spanCountHorizontal)
-        adapter = MovieAdapter(this)
+            when (resources.configuration.orientation) {
+                Configuration.ORIENTATION_PORTRAIT ->
+                    GridLayoutManager(view.context, spanCountVertical).apply {
+                        initialPrefetchItemCount = 2
+                    }
+                else ->
+                    GridLayoutManager(view.context, spanCountHorizontal).apply {
+                        initialPrefetchItemCount = 4
+                    }
+            }
+//        val sizeProvider = FixedPreloadSizeProvider<Movie>(imageWidthPixels, imageHeightPixels)
+        val sizeProvider = ViewPreloadSizeProvider<Movie>()
+        adapter = MovieAdapter(this, sizeProvider)
+
+        val preloader = RecyclerViewPreloader<Movie>(Glide.with(this), adapter!!, sizeProvider, 12)
+        recycler?.addOnScrollListener(preloader)
         recycler?.adapter = adapter
         val dividerItemDecoration: MovieItemDecoration = MovieItemDecoration(offset)
         recycler?.addItemDecoration(dividerItemDecoration)
+
     }
 
     private fun updateRecycler(result: MovieResult) {
@@ -104,13 +111,14 @@ class FragmentMoviesList : Fragment(R.layout.fragment_movies_list), MovieListLis
             is SuccessResult -> {
                 adapter?.let {
 //                    val movieListUpdateCallback = MovieListUpdateCallback(it)
-//                    val movieDiffUtil = MovieDiffUtil(it.listMovies, result.listMovies)
-//                    val diffResult: DiffUtil.DiffResult = DiffUtil.calculateDiff(movieDiffUtil)
+                    val movieDiffUtil = MovieDiffUtil(it.listMovies, result.listMovies)
+                    val diffResult: DiffUtil.DiffResult = DiffUtil.calculateDiff(movieDiffUtil)
                     val simpleDateFormat = SimpleDateFormat("yyyy.MM.dd G 'at' HH:mm:ss z")
                     val currentDateAndTime: String = simpleDateFormat.format(Date())
                     textViewMovieList?.text = "Обновлено в $currentDateAndTime"
                     it.updateData(result.listMovies)
-                    //  diffResult.dispatchUpdatesTo(movieListUpdateCallback)
+                    diffResult.dispatchUpdatesTo(it)
+//                     diffResult.dispatchUpdatesTo(movieListUpdateCallback)
                     //recycler?.smoothScrollToPosition(movieListUpdateCallback.firstInsert);
                 }
             }
@@ -141,7 +149,7 @@ class FragmentMoviesList : Fragment(R.layout.fragment_movies_list), MovieListLis
     }
 
     override fun itemClicked(id: Int) {
-        changeFragment(FragmentMoviesDetails.newInstance(id, ""))
+        changeFragment(FragmentMoviesDetails.newInstance(id))
     }
 
     private fun changeFragment(fragment: Fragment) {
@@ -169,13 +177,11 @@ class FragmentMoviesList : Fragment(R.layout.fragment_movies_list), MovieListLis
          * Use this factory method to create a new instance of
          * this fragment using the provided parameters.
          *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
          * @return A new instance of fragment FragmentMoviesList.
          */
         // TODO: Rename and change types and number of parameters
         @JvmStatic
-        fun newInstance(param1: String, param2: String) =
+        fun newInstance() =
             FragmentMoviesList()
     }
 }

@@ -1,19 +1,8 @@
 package ru.myacademyhomework.myfilms.movieDetails
 
-import android.app.Application
-import android.util.Log
 import androidx.lifecycle.*
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import ru.myacademyhomework.myfilms.BuildConfig
-import ru.myacademyhomework.myfilms.data.Actor
-import ru.myacademyhomework.myfilms.data.ActorsInfo
 import ru.myacademyhomework.myfilms.data.Movie
-import ru.myacademyhomework.myfilms.db.ConverterDb
-import ru.myacademyhomework.myfilms.db.MovieDataBase
-import ru.myacademyhomework.myfilms.movie.MovieInfo
-import ru.myacademyhomework.myfilms.movie.MovieViewHolder.Companion.TAG
 import ru.myacademyhomework.myfilms.network.*
 import ru.myacademyhomework.myfilms.repository.MovieDetailRepository
 
