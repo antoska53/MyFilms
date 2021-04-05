@@ -14,10 +14,7 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.transition.Explode
 import androidx.work.WorkInfo
 import com.bumptech.glide.Glide
-import com.bumptech.glide.ListPreloader
-import com.bumptech.glide.ListPreloader.PreloadSizeProvider
 import com.bumptech.glide.integration.recyclerview.RecyclerViewPreloader
-import com.bumptech.glide.util.FixedPreloadSizeProvider
 import com.bumptech.glide.util.ViewPreloadSizeProvider
 import ru.myacademyhomework.myfilms.*
 import ru.myacademyhomework.myfilms.data.Movie
@@ -39,9 +36,6 @@ class FragmentMoviesList : Fragment(R.layout.fragment_movies_list), MovieListLis
     private var recycler: RecyclerView? = null
     private var progressBar: ProgressBar? = null
     private val viewModel: MovieViewModel by viewModels()
-    private val offset = 20
-    private val spanCountVertical = 2
-    private val spanCountHorizontal = 4
     private val imageWidthPixels = 342;
     private val imageHeightPixels = 513;
     private var textViewMovieList: TextView? = null
@@ -72,7 +66,7 @@ class FragmentMoviesList : Fragment(R.layout.fragment_movies_list), MovieListLis
                     progressLoading(Ready())
                 }
                 WorkInfo.State.SUCCEEDED -> {
-                    Toast.makeText(context, "Список фильмов обновлён", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, getString(R.string.movies_update), Toast.LENGTH_SHORT).show()
                     progressLoading(Ready())
                 }
             }
@@ -81,27 +75,25 @@ class FragmentMoviesList : Fragment(R.layout.fragment_movies_list), MovieListLis
 
     private fun initRecycler(view: View) {
         recycler = view.findViewById(R.id.recycler_movie)
-//        recycler?.setItemViewCacheSize(8)
         recycler?.setHasFixedSize(true)
         recycler?.layoutManager =
             when (resources.configuration.orientation) {
                 Configuration.ORIENTATION_PORTRAIT ->
-                    GridLayoutManager(view.context, spanCountVertical).apply {
+                    GridLayoutManager(view.context, SPAN_COUNT_VERTICAL).apply {
                         initialPrefetchItemCount = 2
                     }
                 else ->
-                    GridLayoutManager(view.context, spanCountHorizontal).apply {
+                    GridLayoutManager(view.context, SPAN_COUNT_HORIZONTAL).apply {
                         initialPrefetchItemCount = 4
                     }
             }
-//        val sizeProvider = FixedPreloadSizeProvider<Movie>(imageWidthPixels, imageHeightPixels)
         val sizeProvider = ViewPreloadSizeProvider<Movie>()
         adapter = MovieAdapter(this, sizeProvider)
 
         val preloader = RecyclerViewPreloader<Movie>(Glide.with(this), adapter!!, sizeProvider, 12)
         recycler?.addOnScrollListener(preloader)
         recycler?.adapter = adapter
-        val dividerItemDecoration: MovieItemDecoration = MovieItemDecoration(offset)
+        val dividerItemDecoration: MovieItemDecoration = MovieItemDecoration(OFFSET)
         recycler?.addItemDecoration(dividerItemDecoration)
 
     }
@@ -110,7 +102,6 @@ class FragmentMoviesList : Fragment(R.layout.fragment_movies_list), MovieListLis
         when (result) {
             is SuccessResult -> {
                 adapter?.let {
-//                    val movieListUpdateCallback = MovieListUpdateCallback(it)
                     val movieDiffUtil = MovieDiffUtil(it.listMovies, result.listMovies)
                     val diffResult: DiffUtil.DiffResult = DiffUtil.calculateDiff(movieDiffUtil)
                     val simpleDateFormat = SimpleDateFormat("yyyy.MM.dd G 'at' HH:mm:ss z")
@@ -118,8 +109,6 @@ class FragmentMoviesList : Fragment(R.layout.fragment_movies_list), MovieListLis
                     textViewMovieList?.text = "Обновлено в $currentDateAndTime"
                     it.updateData(result.listMovies)
                     diffResult.dispatchUpdatesTo(it)
-//                     diffResult.dispatchUpdatesTo(movieListUpdateCallback)
-                    //recycler?.smoothScrollToPosition(movieListUpdateCallback.firstInsert);
                 }
             }
             is ErrorResult -> {
@@ -179,7 +168,10 @@ class FragmentMoviesList : Fragment(R.layout.fragment_movies_list), MovieListLis
          *
          * @return A new instance of fragment FragmentMoviesList.
          */
-        // TODO: Rename and change types and number of parameters
+        private const val OFFSET = 20
+        private const val SPAN_COUNT_VERTICAL = 2
+        private const val SPAN_COUNT_HORIZONTAL = 4
+
         @JvmStatic
         fun newInstance() =
             FragmentMoviesList()

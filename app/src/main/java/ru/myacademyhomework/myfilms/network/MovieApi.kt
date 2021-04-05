@@ -9,17 +9,17 @@ import ru.myacademyhomework.myfilms.data.Genre
 
 interface MovieApi {
     @GET("movie/top_rated")
-    suspend fun getMoviesId(@Query("api_key") api_key: String): MovieTopResponse
+    suspend fun getMoviesId(@Query("api_key") apiKey: String): MovieTopResponse
 
     @GET("movie/{movie_id}")
     suspend fun getMovieInfo(
         @Path("movie_id") id: Int,
-        @Query("api_key") api_key: String
+        @Query("api_key") apiKey: String
     ): MovieInfo
 
     @GET("movie/{movie_id}/credits")
-    suspend fun getActors(@Path("movie_id") id: Int, @Query("api_key") api_key: String): ActorsInfo
+    suspend fun getActors(@Path("movie_id") id: Int, @Query("api_key") apiKey: String): ActorsInfo
 
     @GET("genre/movie/list")
-    suspend fun getGenres(@Query("api_key") api_key: String): GenreResponse
+    suspend fun getGenres(@Query("api_key") apiKey: String): GenreResponse
 }

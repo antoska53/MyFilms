@@ -5,12 +5,7 @@ import android.view.View
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 
-class MovieItemDecoration : RecyclerView.ItemDecoration {
-    private var offset: Int = 0
-
-    constructor(offset: Int) : super() {
-        this.offset = offset
-    }
+class MovieItemDecoration(private var offset: Int) : RecyclerView.ItemDecoration() {
 
     override fun getItemOffsets(
         outRect: Rect,
@@ -19,8 +14,7 @@ class MovieItemDecoration : RecyclerView.ItemDecoration {
         state: RecyclerView.State
     ) {
         super.getItemOffsets(outRect, view, parent, state)
-        var layoutParams: GridLayoutManager.LayoutParams =
-            view.layoutParams as GridLayoutManager.LayoutParams
+        val layoutParams = view.layoutParams as GridLayoutManager.LayoutParams
         if (layoutParams.spanIndex % 2 == 0) {
             outRect.top = offset
             outRect.left = offset

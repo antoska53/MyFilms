@@ -65,9 +65,9 @@ class FragmentMoviesDetails : Fragment(R.layout.fragment_movie_details) {
 
         initRecycler(view)
 
-        viewModel.movieDetailLiveData.observe(this.viewLifecycleOwner, {
-            updateData(it)
-            updateRecycler(it.actors)
+        viewModel.movieDetailLiveData.observe(this.viewLifecycleOwner, { movie ->
+            updateData(movie)
+            updateRecycler(movie.actors)
         })
     }
 
@@ -90,7 +90,6 @@ class FragmentMoviesDetails : Fragment(R.layout.fragment_movie_details) {
         tvMovieDescription?.text = movie.overview
         tvNameMovie?.text = movie.title
         tvReview?.text = movie.numberOfRatings.toString()
-//        tvGenre?.text = movie.genres.joinToString { genre -> genre.name }
         tvGenre?.text = movie.genresString
         tvMinimumAge?.text = movie.minimumAge.toString() + "+"
         ratingBar?.rating = movie.ratings
@@ -101,8 +100,6 @@ class FragmentMoviesDetails : Fragment(R.layout.fragment_movie_details) {
          * Use this factory method to create a new instance of
          * this fragment using the provided parameters.
          *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
          * @return A new instance of fragment FragmentMoviesDetails.
          */
         // TODO: Rename and change types and number of parameters

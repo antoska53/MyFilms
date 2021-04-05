@@ -17,4 +17,5 @@
     <string name="avengers_minutes">137 MIN</string>
     <string name="internet_error">Ошибка при загузке, попробуйте снова</string>
     <string name="terminal_error">Неизвестная ошибка</string>
+    <string name="movies_update">Список фильмов обновлён</string>
 </resources>
