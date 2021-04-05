@@ -23,7 +23,6 @@ import ru.myacademyhomework.myfilms.R
 import ru.myacademyhomework.myfilms.data.Actor
 import ru.myacademyhomework.myfilms.data.Movie
 import ru.myacademyhomework.myfilms.movie.MovieAdapter
-import ru.myacademyhomework.myfilms.movie.MovieViewHolder.Companion.TAG
 import ru.myacademyhomework.myfilms.network.ErrorResult
 import ru.myacademyhomework.myfilms.network.MovieResult
 import ru.myacademyhomework.myfilms.network.SuccessActorResult
@@ -32,7 +31,6 @@ import ru.myacademyhomework.myfilms.network.SuccessDetailResult
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
 private const val MOVIE_ID = "movie_id"
-private const val ARG_PARAM2 = "param2"
 
 /**
  * A simple [Fragment] subclass.
@@ -70,7 +68,6 @@ class FragmentMoviesDetails : Fragment(R.layout.fragment_movie_details) {
         viewModel.movieDetailLiveData.observe(this.viewLifecycleOwner, {
             updateData(it)
             updateRecycler(it.actors)
-            Log.d("ACTORS", "onViewCreated: ${it.actors}")
         })
     }
 
@@ -110,7 +107,7 @@ class FragmentMoviesDetails : Fragment(R.layout.fragment_movie_details) {
          */
         // TODO: Rename and change types and number of parameters
         @JvmStatic
-        fun newInstance(movieId: Int, param2: String) =
+        fun newInstance(movieId: Int) =
             FragmentMoviesDetails()
                 .apply {
                     arguments = bundleOf(

@@ -7,7 +7,6 @@ import androidx.work.WorkManager
 import kotlinx.coroutines.launch
 import ru.myacademyhomework.myfilms.*
 import ru.myacademyhomework.myfilms.data.Movie
-import ru.myacademyhomework.myfilms.movie.MovieViewHolder.Companion.TAG
 import ru.myacademyhomework.myfilms.network.*
 import ru.myacademyhomework.myfilms.repository.MovieRepository
 import ru.myacademyhomework.myfilms.service.WorkMovieHelper
