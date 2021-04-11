@@ -77,6 +77,20 @@ object ConverterDb {
         )
     }
 
+    suspend fun convertMovieToDb(movie: Movie): MovieDb {
+        return MovieDb(
+            id = movie.id,
+            title = movie.title,
+            overview = movie.overview,
+            poster = movie.poster,
+            backdrop = movie.backdrop,
+            ratings = movie.ratings,
+            numberOfRatings = movie.numberOfRatings,
+            minimumAge = movie.minimumAge,
+            runtime = movie.runtime
+        )
+    }
+
     suspend fun convertActorListFromDb(listActorDb: List<ActorDb>): List<Actor> {
         return listActorDb.map {
             Actor(

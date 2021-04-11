@@ -16,6 +16,7 @@ class MovieDetailViewModel(private val movieId: Int) : ViewModel() {
 
     init {
         refreshDataFromRepository()
+        //movieDetailLiveData = movieDetailRepository.movieFlow.asLiveData()
     }
 
     private fun refreshDataFromRepository() {

@@ -85,7 +85,7 @@ class FragmentMoviesDetails : Fragment(R.layout.fragment_movie_details) {
 
     private fun updateData(movie: Movie) {
         Glide.with(requireContext())
-            .load(BuildConfig.BASE_IMAGE_URL + movie.backdrop)
+            .load(BuildConfig.BASE_BACKDROP_IMAGE_URL + movie.backdrop)
             .into(ivImageMovie!!)
         tvMovieDescription?.text = movie.overview
         tvNameMovie?.text = movie.title

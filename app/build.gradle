@@ -20,6 +20,7 @@ android {
 
         buildConfigField "String", "BASE_URL", '"https://api.tmdb.org/3/"'
         buildConfigField "String", "BASE_IMAGE_URL", '"https://image.tmdb.org/t/p/w342"'
+        buildConfigField "String", "BASE_BACKDROP_IMAGE_URL", '"https://image.tmdb.org/t/p/w780"'
         buildConfigField "String", "API_KEY", '"acadf37851dca09504ee69d95626da03"'
     }
 
