@@ -10,29 +10,29 @@ import ru.myacademyhomework.myfilms.data.Genre
 data class MovieDb(
     @PrimaryKey
     @ColumnInfo(name = "id")
-    val id: Int,
+    val id: Int = 0,
 
     @ColumnInfo(name = "title")
-    val title: String,
+    val title: String = "title",
 
     @ColumnInfo(name = "overview")
-    val overview: String,
+    val overview: String = "overview",
 
     @ColumnInfo(name = "poster_path")
-    val poster: String,
+    val poster: String = "poster_path",
 
     @ColumnInfo(name = "backdrop_path")
-    val backdrop: String,
+    val backdrop: String = "backdrop_path",
 
     @ColumnInfo(name = "vote_average")
-    val ratings: Float,
+    val ratings: Float = 0F,
 
     @ColumnInfo(name = "vote_count")
-    val numberOfRatings: Long,
+    val numberOfRatings: Long = 0,
 
     @ColumnInfo(name = "minimum_age")
-    val minimumAge: Int,
+    val minimumAge: Int = 0,
 
     @ColumnInfo(name = "runtime")
-    val runtime: Int,
+    val runtime: Int = 0,
 )

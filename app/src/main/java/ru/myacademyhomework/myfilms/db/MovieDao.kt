@@ -37,7 +37,7 @@ interface MovieDao {
 //    fun getAllMoviesWithGenres(): Flow<List<Movie>>
 
     @Query("select * from movies where id = :movieId")
-    suspend fun getMovieById(movieId: Int): MovieDb
+    suspend fun getMovieById(movieId: Int): MovieDb?
 
     @Query("select * from actors where movie_id = :movieId")
     fun getActorsByMovieId(movieId: Int): Flow<List<ActorDb>>

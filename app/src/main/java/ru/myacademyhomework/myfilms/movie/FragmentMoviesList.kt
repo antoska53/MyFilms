@@ -149,7 +149,7 @@ class FragmentMoviesList : Fragment(R.layout.fragment_movies_list), MovieListLis
         parentFragmentManager.beginTransaction()
             .replace(R.id.fragment_container, fragment)
             //.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
-            .addToBackStack(null)
+            .addToBackStack(DETAILS_MOVIE)
             .commit()
     }
 
@@ -171,6 +171,7 @@ class FragmentMoviesList : Fragment(R.layout.fragment_movies_list), MovieListLis
         private const val OFFSET = 20
         private const val SPAN_COUNT_VERTICAL = 2
         private const val SPAN_COUNT_HORIZONTAL = 4
+        const val DETAILS_MOVIE = "DETAILS_MOVIE"
 
         @JvmStatic
         fun newInstance() =
