@@ -25,7 +25,7 @@ class MovieViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
     fun onBind(movie: Movie, listener: MovieListListener) {
         itemView.setOnClickListener{
-            listener.itemClicked(movie.id)
+            listener.itemClicked(movie.id, it)
         }
 
         Glide.with(itemView)

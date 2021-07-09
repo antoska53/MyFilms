@@ -33,6 +33,7 @@ class MovieAdapter(
     }
 
     override fun onBindViewHolder(holder: MovieViewHolder, position: Int) {
+        holder.itemView.transitionName = holder.itemView.context.getString(R.string.movie_card_transition_name) + position
         holder.onBind(_listMovies.get(position), listener)
     }
 

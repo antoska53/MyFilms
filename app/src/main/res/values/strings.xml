@@ -18,4 +18,6 @@
     <string name="internet_error">Ошибка при загузке, попробуйте снова</string>
     <string name="terminal_error">Неизвестная ошибка</string>
     <string name="movies_update">Список фильмов обновлён</string>
+    <string name="movie_detail_transition_name">movie_detail_transition_name</string>
+    <string name="movie_card_transition_name">movie_card_transition_name</string>
 </resources>
