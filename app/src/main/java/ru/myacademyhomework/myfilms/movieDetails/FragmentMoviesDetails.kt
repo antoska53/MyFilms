@@ -1,5 +1,6 @@
 package ru.myacademyhomework.myfilms.movieDetails
 
+import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -10,6 +11,7 @@ import android.widget.ImageView
 import android.widget.RatingBar
 import android.widget.TextView
 import android.widget.Toast
+import androidx.core.content.res.use
 import androidx.core.os.bundleOf
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.LiveData
@@ -18,6 +20,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.google.android.material.transition.MaterialContainerTransform
 import ru.myacademyhomework.myfilms.BuildConfig
 import ru.myacademyhomework.myfilms.R
 import ru.myacademyhomework.myfilms.data.Actor
@@ -27,6 +30,7 @@ import ru.myacademyhomework.myfilms.network.ErrorResult
 import ru.myacademyhomework.myfilms.network.MovieResult
 import ru.myacademyhomework.myfilms.network.SuccessActorResult
 import ru.myacademyhomework.myfilms.network.SuccessDetailResult
+import android.content.res.Resources.Theme
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -52,6 +56,20 @@ class FragmentMoviesDetails : Fragment(R.layout.fragment_movie_details) {
     private var adapter: ActorAdapter? = null
     private val viewModel: MovieDetailViewModel by viewModels { MovieDetailViewModel.Factory(movieId) }
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        sharedElementEnterTransition = MaterialContainerTransform().apply {
+            duration = 300
+            scrimColor = Color.TRANSPARENT
+            setAllContainerColors(
+                requireContext().obtainStyledAttributes(
+                intArrayOf(R.attr.colorSurface)
+            ).use {
+                it.getColor(0, Color.MAGENTA)
+            })
+        }
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)

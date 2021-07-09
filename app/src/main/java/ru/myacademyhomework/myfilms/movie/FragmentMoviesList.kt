@@ -8,6 +8,7 @@ import android.view.View
 import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
+import androidx.core.view.doOnPreDraw
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
@@ -16,6 +17,7 @@ import androidx.work.WorkInfo
 import com.bumptech.glide.Glide
 import com.bumptech.glide.integration.recyclerview.RecyclerViewPreloader
 import com.bumptech.glide.util.ViewPreloadSizeProvider
+import com.google.android.material.transition.MaterialElevationScale
 import ru.myacademyhomework.myfilms.*
 import ru.myacademyhomework.myfilms.data.Movie
 import ru.myacademyhomework.myfilms.movieDetails.FragmentMoviesDetails
@@ -43,6 +45,12 @@ class FragmentMoviesList : Fragment(R.layout.fragment_movies_list), MovieListLis
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        postponeEnterTransition()
+        view.doOnPreDraw {
+            startPostponedEnterTransition()
+        }
+
         initRecycler(view)
         progressBar = view.findViewById(R.id.progress_load)
         textViewMovieList = view.findViewById(R.id.tv_movie_list)
@@ -137,16 +145,23 @@ class FragmentMoviesList : Fragment(R.layout.fragment_movies_list), MovieListLis
         }
     }
 
-    override fun itemClicked(id: Int) {
-        changeFragment(FragmentMoviesDetails.newInstance(id))
+    override fun itemClicked(id: Int, cardView: View) {
+        changeFragment(FragmentMoviesDetails.newInstance(id), cardView)
     }
 
-    private fun changeFragment(fragment: Fragment) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            fragment.enterTransition = Explode()
-            fragment.exitTransition = Explode()
+    private fun changeFragment(fragment: Fragment, cardView: View) {
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+//            fragment.enterTransition = Explode()
+//            fragment.exitTransition = Explode()
+//        }
+        exitTransition = MaterialElevationScale(false).apply{
+            duration = 300
+        }
+        reenterTransition = MaterialElevationScale(true).apply {
+            duration = 300
         }
         parentFragmentManager.beginTransaction()
+            .addSharedElement(cardView, requireContext().getString(R.string.movie_detail_transition_name))
             .replace(R.id.fragment_container, fragment)
             //.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
             .addToBackStack(DETAILS_MOVIE)
