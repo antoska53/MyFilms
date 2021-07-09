@@ -9,7 +9,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        app:cardBackgroundColor="@color/color_app"
+        app:cardBackgroundColor="@android:color/transparent"
+        app:cardElevation="0dp"
         app:cardCornerRadius="10dp"
         app:strokeColor="@color/grey_cardview"
         app:strokeWidth="0.5dp">
