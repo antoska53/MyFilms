@@ -31,6 +31,7 @@ import ru.myacademyhomework.myfilms.network.MovieResult
 import ru.myacademyhomework.myfilms.network.SuccessActorResult
 import ru.myacademyhomework.myfilms.network.SuccessDetailResult
 import android.content.res.Resources.Theme
+import androidx.core.content.ContextCompat
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -62,12 +63,8 @@ class FragmentMoviesDetails : Fragment(R.layout.fragment_movie_details) {
         sharedElementEnterTransition = MaterialContainerTransform().apply {
             duration = 300
             scrimColor = Color.TRANSPARENT
-            setAllContainerColors(
-                requireContext().obtainStyledAttributes(
-                intArrayOf(R.attr.colorSurface)
-            ).use {
-                it.getColor(0, Color.MAGENTA)
-            })
+            setAllContainerColors(ContextCompat.getColor(requireContext(), R.color.color_app))
+
         }
     }
 
