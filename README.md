@@ -1,6 +1,6 @@
 # MyFilms
 
-Приложение аналог кинопоиска
+Приложение с базой данных фильмов
 
 api: https://www.themoviedb.org/documentation/api
 
